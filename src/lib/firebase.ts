@@ -59,6 +59,8 @@ try {
     googleProvider.addScope('profile');
     
     console.log('✅ Firebase initialized successfully');
+    console.log('🔥 Project ID:', firebaseConfig.projectId);
+    console.log('🌐 Auth Domain:', firebaseConfig.authDomain);
   } else {
     console.warn('⚠️ Firebase not initialized due to missing configuration');
   }
