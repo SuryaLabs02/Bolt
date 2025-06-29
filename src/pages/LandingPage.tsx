@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import InteractiveHero from '../components/InteractiveHero';
+import TestimonialsSection from '../components/TestimonialsSection';
 import { 
   ArrowRight, 
   BookOpen, 
@@ -135,26 +136,31 @@ const LandingPage: React.FC = () => {
               </div>
             </div>
           </section>
-
-          {/* CTA Section */}
-          <section className="py-20 bg-gradient-to-r from-primary-600 to-secondary-600 text-white">
-            <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Ready to Transform Your Tech Journey?
-              </h2>
-              <p className="text-xl mb-8 text-primary-100">
-                Join thousands of students already learning and building their tech careers
-              </p>
-              <Link
-                to="/dashboard"
-                className="bg-accent-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-accent-600 transition-colors text-lg inline-flex items-center space-x-2"
-              >
-                <span>Go to Dashboard</span>
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-            </div>
-          </section>
         </>
+      )}
+
+      {/* Testimonials Section - Always show */}
+      <TestimonialsSection />
+
+      {/* CTA Section - Only show for authenticated users */}
+      {isAuthenticated && (
+        <section className="py-20 bg-gradient-to-r from-primary-600 to-secondary-600 text-white">
+          <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Ready to Transform Your Tech Journey?
+            </h2>
+            <p className="text-xl mb-8 text-primary-100">
+              Join thousands of students already learning and building their tech careers
+            </p>
+            <Link
+              to="/dashboard"
+              className="bg-accent-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-accent-600 transition-colors text-lg inline-flex items-center space-x-2"
+            >
+              <span>Go to Dashboard</span>
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+          </div>
+        </section>
       )}
     </div>
   );
