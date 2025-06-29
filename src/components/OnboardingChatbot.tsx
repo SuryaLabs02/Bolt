@@ -71,7 +71,7 @@ const OnboardingChatbot: React.FC = () => {
   const onboardingSteps = [
     {
       id: 'welcome',
-      botMessage: `Hey there! 👋 I'm TechBot, your personal learning assistant. I'm here to help personalize your TechLearn experience! 
+      botMessage: `Hey there! 👋 I'm InnovateBot, your personal learning assistant. I'm here to help personalize your InnovateX Campus experience! 
 
 Let's get to know each other better. What should I call you?`,
       inputType: 'text' as const,
@@ -82,7 +82,7 @@ Let's get to know each other better. What should I call you?`,
       id: 'bio',
       botMessage: `Nice to meet you, {name}! 🎉 
 
-Tell me a bit about yourself. What's your background or what brings you to TechLearn?`,
+Tell me a bit about yourself. What's your background or what brings you to InnovateX Campus?`,
       inputType: 'text' as const,
       field: 'bio',
       placeholder: 'Tell me about yourself...'
@@ -128,7 +128,7 @@ How would you describe your overall programming experience?`,
       id: 'goals',
       botMessage: `Almost done! 🎯 
 
-What are your main goals for learning on TechLearn? (Select all that apply)`,
+What are your main goals for learning on InnovateX Campus? (Select all that apply)`,
       inputType: 'multiselect' as const,
       field: 'goals',
       options: goalOptions
@@ -139,7 +139,7 @@ What are your main goals for learning on TechLearn? (Select all that apply)`,
 
 Your profile has been saved and I'll use this information to recommend the best courses and resources for you. 
 
-Welcome to TechLearn, {name}! Ready to start your tech journey? 🚀`,
+Welcome to InnovateX Campus, {name}! Ready to start your tech journey? 🚀`,
       inputType: 'none' as const,
       field: 'complete'
     }
@@ -345,7 +345,7 @@ Welcome to TechLearn, {name}! Ready to start your tech journey? 🚀`,
       setSaveError(null);
       
       // Add success message
-      addBotMessage('✅ Your profile has been saved successfully! Welcome to TechLearn!');
+      addBotMessage('✅ Your profile has been saved successfully! Welcome to InnovateX Campus!');
       
       // Show completion message
       setTimeout(() => {
@@ -448,7 +448,7 @@ Welcome to TechLearn, {name}! Ready to start your tech journey? 🚀`,
                 <Bot className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold">TechBot</h3>
+                <h3 className="font-semibold">InnovateBot</h3>
                 <p className="text-xs text-purple-100">Your Learning Assistant</p>
               </div>
             </div>
@@ -472,6 +472,9 @@ Welcome to TechLearn, {name}! Ready to start your tech journey? 🚀`,
                 style={{ width: `${((currentStep + 1) / onboardingSteps.length) * 100}%` }}
               />
             </div>
+            <p className="text-sm text-gray-600 mt-2">
+              {currentStep + 1} of {onboardingSteps.length} preparation steps completed
+            </p>
           </div>
 
           {/* Messages */}
