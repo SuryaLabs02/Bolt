@@ -57,6 +57,9 @@ export default {
         'scroll-right': 'scrollRight 30s linear infinite',
         'float': 'float 3s ease-in-out infinite',
         'glow': 'glow 2s ease-in-out infinite alternate',
+        'zoom-in': 'zoomIn 1.5s ease-out forwards',
+        'slide-in-left': 'slideInLeft 1s ease-out forwards',
+        'slide-in-right': 'slideInRight 1s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
@@ -128,6 +131,46 @@ export default {
         glow: {
           '0%': { boxShadow: '0 0 5px rgba(59, 130, 246, 0.5)' },
           '100%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.6)' },
+        },
+        zoomIn: {
+          '0%': { 
+            transform: 'scale(0.8) rotateY(-10deg)',
+            opacity: '0',
+            filter: 'blur(8px)'
+          },
+          '50%': {
+            transform: 'scale(1.05) rotateY(5deg)',
+            filter: 'blur(2px)'
+          },
+          '100%': { 
+            transform: 'scale(1) rotateY(0deg)',
+            opacity: '1',
+            filter: 'blur(0px)'
+          },
+        },
+        slideInLeft: {
+          '0%': { 
+            transform: 'translateX(-100%) rotateY(-30deg)',
+            opacity: '0',
+            filter: 'blur(5px)'
+          },
+          '100%': { 
+            transform: 'translateX(0) rotateY(0deg)',
+            opacity: '1',
+            filter: 'blur(0px)'
+          },
+        },
+        slideInRight: {
+          '0%': { 
+            transform: 'translateX(100%) rotateY(30deg)',
+            opacity: '0',
+            filter: 'blur(5px)'
+          },
+          '100%': { 
+            transform: 'translateX(0) rotateY(0deg)',
+            opacity: '1',
+            filter: 'blur(0px)'
+          },
         },
         shapeWave: {
           '0%': {
@@ -226,13 +269,18 @@ export default {
         '7': '7px',
       },
       scale: {
+        '75': '0.75',
         '90': '0.9',
         '95': '0.95',
         '110': '1.1',
         '150': '1.5',
       },
       rotate: {
+        '2': '2deg',
         '3': '3deg',
+      },
+      perspective: {
+        '1000': '1000px',
       },
     },
   },

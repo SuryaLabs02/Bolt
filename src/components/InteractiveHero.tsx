@@ -103,11 +103,6 @@ const InteractiveHero: React.FC = () => {
 
   // Moving tech logos data
   const techLogos = [
-    { name: 'YouTube', icon: '🎥', color: 'text-red-400', bgColor: 'bg-red-500/20' },
-    { name: 'Devpost', icon: '🚀', color: 'text-blue-400', bgColor: 'bg-blue-500/20' },
-    { name: 'Hackathons', icon: '🏆', color: 'text-yellow-400', bgColor: 'bg-yellow-500/20' },
-    { name: 'Courses', icon: '📚', color: 'text-green-400', bgColor: 'bg-green-500/20' },
-    { name: 'GitHub', icon: '🐱', color: 'text-gray-300', bgColor: 'bg-gray-500/20' },
     { name: 'Stack Overflow', icon: '📊', color: 'text-orange-400', bgColor: 'bg-orange-500/20' },
     { name: 'LeetCode', icon: '💻', color: 'text-yellow-300', bgColor: 'bg-yellow-500/20' },
     { name: 'Kaggle', icon: '📈', color: 'text-blue-300', bgColor: 'bg-blue-500/20' },
@@ -115,6 +110,11 @@ const InteractiveHero: React.FC = () => {
     { name: 'Discord', icon: '💬', color: 'text-indigo-400', bgColor: 'bg-indigo-500/20' },
     { name: 'Slack', icon: '💼', color: 'text-purple-400', bgColor: 'bg-purple-500/20' },
     { name: 'Figma', icon: '🎨', color: 'text-pink-400', bgColor: 'bg-pink-500/20' },
+    { name: 'YouTube', icon: '🎥', color: 'text-red-400', bgColor: 'bg-red-500/20' },
+    { name: 'Devpost', icon: '🚀', color: 'text-blue-400', bgColor: 'bg-blue-500/20' },
+    { name: 'Hackathons', icon: '🏆', color: 'text-yellow-400', bgColor: 'bg-yellow-500/20' },
+    { name: 'Courses', icon: '📚', color: 'text-green-400', bgColor: 'bg-green-500/20' },
+    { name: 'GitHub', icon: '🐱', color: 'text-gray-300', bgColor: 'bg-gray-500/20' },
   ];
 
   const handleGoogleSignIn = async () => {
@@ -203,56 +203,21 @@ const InteractiveHero: React.FC = () => {
   }
 
   return (
-    <section className="min-h-[120vh] bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 relative overflow-hidden">
+    <section className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 relative overflow-hidden">
       {/* Enhanced Background Effects */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%239C92AC%22 fill-opacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
       
-      {/* Floating gradient orbs with new colors */}
+      {/* Floating gradient orbs */}
       <div className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
       <div className="absolute top-40 right-32 w-80 h-80 bg-gradient-to-r from-violet-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
       <div className="absolute bottom-32 left-32 w-72 h-72 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute bottom-20 right-20 w-88 h-88 bg-gradient-to-r from-rose-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
       
-      {/* Floating Spline Scene - Right Side */}
-      <div className="fixed right-8 top-1/2 transform -translate-y-1/2 z-20 animate-float">
-        <div className="relative w-80 h-80 rounded-3xl overflow-hidden bg-gradient-to-br from-cyan-500/10 to-purple-500/10 backdrop-blur-xl border border-white/20 shadow-2xl">
-          <Suspense fallback={
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white">
-                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-cyan-400" />
-                <p className="text-sm">Loading 3D Experience...</p>
-              </div>
-            </div>
-          }>
-            <Spline 
-              scene="https://prod.spline.design/aXNv3GGDJB6QILuV/scene.splinecode"
-              onLoad={() => setSplineLoaded(true)}
-              style={{ width: '100%', height: '100%' }}
-            />
-          </Suspense>
-          
-          {/* Floating status indicators */}
-          <div className="absolute top-4 left-4 bg-cyan-500/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-cyan-400/30 animate-pulse">
-            <div className="flex items-center space-x-2 text-cyan-300">
-              <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-              <span className="text-xs font-medium">Interactive</span>
-            </div>
-          </div>
-          
-          <div className="absolute bottom-4 right-4 bg-purple-500/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-purple-400/30 animate-pulse" style={{ animationDelay: '0.5s' }}>
-            <div className="flex items-center space-x-2 text-purple-300">
-              <Sparkles className="h-3 w-3 text-purple-400" />
-              <span className="text-xs font-medium">AI-Powered</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
-        <div className="max-w-4xl">
-          
-          {/* Hero Content */}
-          <div className="space-y-12 text-white">
+      {/* Main Content Container */}
+      <div className="flex min-h-screen">
+        {/* Left Side - Content (60% width) */}
+        <div className="w-3/5 flex items-center justify-center px-8 lg:px-16 relative z-10">
+          <div className="max-w-3xl space-y-12 text-white">
+            
             {/* Logo and Brand */}
             <div className="flex items-center space-x-4 animate-fade-in">
               <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-4 rounded-2xl shadow-lg">
@@ -273,7 +238,7 @@ const InteractiveHero: React.FC = () => {
                 </span>
               </div>
               
-              <h1 className="text-6xl md:text-8xl font-bold leading-tight">
+              <h1 className="text-5xl md:text-7xl font-bold leading-tight">
                 <span className="block text-white">Master</span>
                 <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent block animate-pulse">
                   Technology
@@ -281,7 +246,7 @@ const InteractiveHero: React.FC = () => {
                 <span className="block text-white">Excellence</span>
               </h1>
               
-              <p className="text-2xl text-gray-300 max-w-3xl leading-relaxed">
+              <p className="text-xl text-gray-300 max-w-2xl leading-relaxed">
                 From programming fundamentals to cutting-edge AI, accelerate your tech career with 
                 <span className="text-cyan-400 font-semibold"> comprehensive courses</span>, 
                 <span className="text-purple-400 font-semibold"> hands-on projects</span>, and 
@@ -290,18 +255,18 @@ const InteractiveHero: React.FC = () => {
             </div>
 
             {/* Enhanced Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
               {stats.map((stat, index) => {
                 const Icon = stat.icon;
                 return (
                   <div key={stat.label} className="group relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                    <div className="relative text-center p-6 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:border-white/20">
-                      <div className={`bg-gradient-to-r ${stat.color} w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-                        <Icon className="h-6 w-6 text-white" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 rounded-xl blur-lg group-hover:blur-xl transition-all duration-300"></div>
+                    <div className="relative text-center p-4 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:border-white/20">
+                      <div className={`bg-gradient-to-r ${stat.color} w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-3 shadow-lg`}>
+                        <Icon className="h-5 w-5 text-white" />
                       </div>
-                      <div className="text-3xl font-bold text-white mb-1">{stat.number}</div>
-                      <div className="text-sm text-gray-300 font-medium">{stat.label}</div>
+                      <div className="text-2xl font-bold text-white mb-1">{stat.number}</div>
+                      <div className="text-xs text-gray-300 font-medium">{stat.label}</div>
                     </div>
                   </div>
                 );
@@ -309,19 +274,19 @@ const InteractiveHero: React.FC = () => {
             </div>
 
             {/* Enhanced Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in" style={{ animationDelay: '0.5s' }}>
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
                   <div key={feature.title} className="group relative">
-                    <div className={`absolute inset-0 ${feature.bgColor} rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300`}></div>
-                    <div className="relative flex items-start space-x-4 p-6 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:border-white/20">
-                      <div className={`bg-gradient-to-r ${feature.color} p-3 rounded-xl flex-shrink-0 shadow-lg`}>
-                        <Icon className="h-6 w-6 text-white" />
+                    <div className={`absolute inset-0 ${feature.bgColor} rounded-xl blur-lg group-hover:blur-xl transition-all duration-300`}></div>
+                    <div className="relative flex items-start space-x-3 p-4 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:border-white/20">
+                      <div className={`bg-gradient-to-r ${feature.color} p-2 rounded-lg flex-shrink-0 shadow-lg`}>
+                        <Icon className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-white text-lg mb-2">{feature.title}</h3>
-                        <p className="text-gray-300">{feature.description}</p>
+                        <h3 className="font-bold text-white text-base mb-1">{feature.title}</h3>
+                        <p className="text-gray-300 text-sm">{feature.description}</p>
                       </div>
                     </div>
                   </div>
@@ -331,11 +296,11 @@ const InteractiveHero: React.FC = () => {
 
             {/* Enhanced Tech Categories */}
             <div className="animate-fade-in" style={{ animationDelay: '0.7s' }}>
-              <div className="flex items-center space-x-3 mb-6">
-                <TrendingUp className="h-6 w-6 text-emerald-400" />
-                <h3 className="text-xl font-bold text-white">Popular Learning Paths</h3>
+              <div className="flex items-center space-x-3 mb-4">
+                <TrendingUp className="h-5 w-5 text-emerald-400" />
+                <h3 className="text-lg font-bold text-white">Popular Learning Paths</h3>
               </div>
-              <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-9 gap-4">
+              <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-9 gap-3">
                 {techCategories.map((category, index) => {
                   const Icon = category.icon;
                   return (
@@ -344,12 +309,12 @@ const InteractiveHero: React.FC = () => {
                       className="group relative cursor-pointer"
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                      <div className={`absolute inset-0 ${category.bgColor} rounded-2xl blur-lg group-hover:blur-xl transition-all duration-300`}></div>
-                      <div className="relative text-center p-4 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-110 hover:border-white/20">
-                        <div className={`bg-gradient-to-r ${category.color} w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg`}>
-                          <Icon className="h-6 w-6 text-white" />
+                      <div className={`absolute inset-0 ${category.bgColor} rounded-xl blur-md group-hover:blur-lg transition-all duration-300`}></div>
+                      <div className="relative text-center p-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-110 hover:border-white/20">
+                        <div className={`bg-gradient-to-r ${category.color} w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2 shadow-lg`}>
+                          <Icon className="h-4 w-4 text-white" />
                         </div>
-                        <span className="text-sm font-medium text-white block">{category.name}</span>
+                        <span className="text-xs font-medium text-white block">{category.name}</span>
                       </div>
                     </div>
                   );
@@ -358,69 +323,99 @@ const InteractiveHero: React.FC = () => {
             </div>
 
             {/* Call to Action */}
-            <div className="flex flex-col sm:flex-row gap-6 animate-fade-in" style={{ animationDelay: '0.9s' }}>
+            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: '0.9s' }}>
               <button
                 onClick={() => setShowAuthForm(true)}
-                className="group relative overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-cyan-500/25 transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-3"
+                className="group relative overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-xl font-bold text-lg shadow-2xl hover:shadow-cyan-500/25 transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
               >
                 <span>Get Started Free</span>
-                <ArrowRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
               
-              <button className="group flex items-center space-x-3 text-white hover:text-cyan-400 transition-colors duration-300">
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-full border border-white/20 group-hover:border-cyan-400/50 transition-all duration-300">
-                  <Play className="h-6 w-6" />
+              <button className="group flex items-center space-x-2 text-white hover:text-cyan-400 transition-colors duration-300">
+                <div className="bg-white/10 backdrop-blur-sm p-2 rounded-full border border-white/20 group-hover:border-cyan-400/50 transition-all duration-300">
+                  <Play className="h-5 w-5" />
                 </div>
                 <span className="font-medium">Watch Demo</span>
               </button>
             </div>
+          </div>
+        </div>
 
-            {/* Scroll Indicator */}
-            <div className="flex justify-center animate-bounce" style={{ animationDelay: '1.5s' }}>
-              <ChevronDown className="h-8 w-8 text-gray-400" />
+        {/* Right Side - Spline Scene (40% width) */}
+        <div className="w-2/5 flex items-center justify-center p-8 relative">
+          <div className="relative w-full max-w-lg h-96 rounded-3xl overflow-hidden bg-gradient-to-br from-cyan-500/10 to-purple-500/10 backdrop-blur-xl border border-white/20 shadow-2xl animate-float">
+            <Suspense fallback={
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center text-white">
+                  <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-cyan-400" />
+                  <p className="text-sm">Loading 3D Experience...</p>
+                </div>
+              </div>
+            }>
+              <Spline 
+                scene="https://prod.spline.design/aXNv3GGDJB6QILuV/scene.splinecode"
+                onLoad={() => setSplineLoaded(true)}
+                style={{ width: '100%', height: '100%' }}
+              />
+            </Suspense>
+            
+            {/* Floating status indicators */}
+            <div className="absolute top-4 left-4 bg-cyan-500/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-cyan-400/30 animate-pulse">
+              <div className="flex items-center space-x-2 text-cyan-300">
+                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                <span className="text-xs font-medium">Interactive</span>
+              </div>
+            </div>
+            
+            <div className="absolute bottom-4 right-4 bg-purple-500/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-purple-400/30 animate-pulse" style={{ animationDelay: '0.5s' }}>
+              <div className="flex items-center space-x-2 text-purple-300">
+                <Sparkles className="h-3 w-3 text-purple-400" />
+                <span className="text-xs font-medium">AI-Powered</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Enhanced Moving Tech Logos Section */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-black/90 via-indigo-900/90 to-black/90 backdrop-blur-xl border-t border-white/10 py-8 overflow-hidden">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-black/90 via-indigo-900/90 to-black/90 backdrop-blur-xl border-t border-white/10 py-6 overflow-hidden">
         <div className="relative">
           {/* Moving logos container */}
-          <div className="flex animate-scroll-right space-x-8">
+          <div className="flex animate-scroll-right space-x-6">
             {/* First set of logos */}
             {techLogos.map((logo, index) => (
               <div
                 key={`first-${index}`}
-                className="group flex items-center space-x-4 bg-white/5 backdrop-blur-xl px-8 py-4 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-110 cursor-pointer flex-shrink-0 min-w-max"
+                className="group flex items-center space-x-3 bg-white/5 backdrop-blur-xl px-6 py-3 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-110 cursor-pointer flex-shrink-0 min-w-max"
               >
-                <span className="text-3xl">{logo.icon}</span>
-                <span className="text-white font-bold text-lg">{logo.name}</span>
-                <div className={`w-3 h-3 ${logo.bgColor} rounded-full animate-pulse border border-white/20`}></div>
+                <span className="text-2xl">{logo.icon}</span>
+                <span className="text-white font-bold text-base">{logo.name}</span>
+                <div className={`w-2 h-2 ${logo.bgColor} rounded-full animate-pulse border border-white/20`}></div>
               </div>
             ))}
             {/* Duplicate set for seamless loop */}
             {techLogos.map((logo, index) => (
               <div
                 key={`second-${index}`}
-                className="group flex items-center space-x-4 bg-white/5 backdrop-blur-xl px-8 py-4 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-110 cursor-pointer flex-shrink-0 min-w-max"
+                className="group flex items-center space-x-3 bg-white/5 backdrop-blur-xl px-6 py-3 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-110 cursor-pointer flex-shrink-0 min-w-max"
               >
-                <span className="text-3xl">{logo.icon}</span>
-                <span className="text-white font-bold text-lg">{logo.name}</span>
-                <div className={`w-3 h-3 ${logo.bgColor} rounded-full animate-pulse border border-white/20`}></div>
+                <span className="text-2xl">{logo.icon}</span>
+                <span className="text-white font-bold text-base">{logo.name}</span>
+                <div className={`w-2 h-2 ${logo.bgColor} rounded-full animate-pulse border border-white/20`}></div>
               </div>
             ))}
           </div>
           
           {/* Enhanced gradient overlays */}
-          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-black/90 to-transparent pointer-events-none"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-black/90 to-transparent pointer-events-none"></div>
+          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-black/90 to-transparent pointer-events-none"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-black/90 to-transparent pointer-events-none"></div>
         </div>
         
         {/* Enhanced subtitle */}
-        <div className="text-center mt-6">
-          <p className="text-gray-300 text-lg font-medium">
+        <div className="text-center mt-4">
+          <p className="text-gray-300 text-base font-medium">
             🚀 <span className="text-cyan-400">Trusted by developers worldwide</span> • 
             🌟 <span className="text-purple-400">Industry-leading platforms</span> • 
             💡 <span className="text-emerald-400">Learn from the best</span>

@@ -33,11 +33,15 @@ function App() {
 
   return (
     <div 
-      className={`transition-all duration-1000 ease-out ${
+      className={`transition-all duration-1500 ease-out transform-gpu ${
         showMainApp 
           ? 'scale-100 opacity-100 rotate-0 blur-0' 
-          : 'scale-90 opacity-0 rotate-3 blur-sm'
+          : 'scale-75 opacity-0 rotate-2 blur-md'
       }`}
+      style={{
+        transformOrigin: 'center center',
+        perspective: '1000px'
+      }}
     >
       <AuthProvider>
         <Router>
