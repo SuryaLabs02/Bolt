@@ -25,7 +25,7 @@ interface CourseResource {
 
 const StudyAssistantChatbot: React.FC = () => {
   const { firebaseUser } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true); // Open by default
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -316,9 +316,9 @@ Don't mention the course links in your response as they will be shown separately
         </button>
       )}
 
-      {/* Chatbot Window - Reduced Width */}
+      {/* Chatbot Window - Increased Height */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-40 w-80 h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
+        <div className="fixed bottom-6 right-6 z-40 w-96 h-[650px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 flex items-center justify-between">
             <div className="flex items-center space-x-3">
