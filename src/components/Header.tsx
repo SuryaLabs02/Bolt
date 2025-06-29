@@ -42,6 +42,11 @@ const Header: React.FC = () => {
   // Check if we're on the landing page
   const isLandingPage = location.pathname === '/';
 
+  // Don't render header at all on landing page for unauthenticated users
+  if (isLandingPage && !isAuthenticated && !loading) {
+    return null;
+  }
+
   if (loading) {
     return (
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -97,65 +102,63 @@ const Header: React.FC = () => {
             </nav>
           )}
 
-          {/* User Menu - Only show if authenticated OR not on landing page */}
-          {(isAuthenticated || !isLandingPage) && (
-            <div className="flex items-center space-x-4">
-              {isAuthenticated ? (
-                <div className="relative">
-                  <button
-                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                    className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <img
-                      src={user?.avatar}
-                      alt={user?.name}
-                      className="h-8 w-8 rounded-full border-2 border-primary-200"
-                    />
-                    <span className="hidden sm:block text-sm font-medium text-gray-700">
-                      {user?.name}
-                    </span>
-                  </button>
-
-                  {isProfileMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
-                      <Link
-                        to="/profile"
-                        className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsProfileMenuOpen(false)}
-                      >
-                        <User className="h-4 w-4" />
-                        <span>Profile</span>
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        <span>Sign Out</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  to="/"
-                  className="bg-primary-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-700 transition-colors"
-                >
-                  Sign In
-                </Link>
-              )}
-
-              {/* Mobile menu button - Only show for authenticated users */}
-              {isAuthenticated && (
+          {/* User Menu */}
+          <div className="flex items-center space-x-4">
+            {isAuthenticated ? (
+              <div className="relative">
                 <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="md:hidden p-2 rounded-md hover:bg-gray-100"
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                  <img
+                    src={user?.avatar}
+                    alt={user?.name}
+                    className="h-8 w-8 rounded-full border-2 border-primary-200"
+                  />
+                  <span className="hidden sm:block text-sm font-medium text-gray-700">
+                    {user?.name}
+                  </span>
                 </button>
-              )}
-            </div>
-          )}
+
+                {isProfileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
+                    <Link
+                      to="/profile"
+                      className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                    >
+                      <User className="h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                to="/"
+                className="bg-primary-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-700 transition-colors"
+              >
+                Sign In
+              </Link>
+            )}
+
+            {/* Mobile menu button - Only show for authenticated users */}
+            {isAuthenticated && (
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="md:hidden p-2 rounded-md hover:bg-gray-100"
+              >
+                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Mobile Navigation - Only show for authenticated users */}
