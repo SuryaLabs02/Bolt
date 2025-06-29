@@ -30,7 +30,11 @@ import {
   Github,
   Sparkles,
   Target,
-  TrendingUp
+  TrendingUp,
+  Rocket,
+  Brain,
+  Palette,
+  Monitor
 } from 'lucide-react';
 
 const InteractiveHero: React.FC = () => {
@@ -84,6 +88,22 @@ const InteractiveHero: React.FC = () => {
       title: 'Fast-Track Learning',
       description: 'Accelerated paths to master new skills'
     }
+  ];
+
+  // Moving tech logos data
+  const techLogos = [
+    { name: 'YouTube', icon: '🎥', color: 'text-red-500', bgColor: 'bg-red-100' },
+    { name: 'Devpost', icon: '🚀', color: 'text-blue-500', bgColor: 'bg-blue-100' },
+    { name: 'Hackathons', icon: '🏆', color: 'text-yellow-500', bgColor: 'bg-yellow-100' },
+    { name: 'Courses', icon: '📚', color: 'text-green-500', bgColor: 'bg-green-100' },
+    { name: 'GitHub', icon: '🐱', color: 'text-gray-700', bgColor: 'bg-gray-100' },
+    { name: 'Stack Overflow', icon: '📊', color: 'text-orange-500', bgColor: 'bg-orange-100' },
+    { name: 'LeetCode', icon: '💻', color: 'text-yellow-600', bgColor: 'bg-yellow-100' },
+    { name: 'Kaggle', icon: '📈', color: 'text-blue-600', bgColor: 'bg-blue-100' },
+    { name: 'CodePen', icon: '✏️', color: 'text-black', bgColor: 'bg-gray-100' },
+    { name: 'Discord', icon: '💬', color: 'text-indigo-500', bgColor: 'bg-indigo-100' },
+    { name: 'Slack', icon: '💼', color: 'text-purple-500', bgColor: 'bg-purple-100' },
+    { name: 'Figma', icon: '🎨', color: 'text-pink-500', bgColor: 'bg-pink-100' },
   ];
 
   const handleGoogleSignIn = async () => {
@@ -176,13 +196,17 @@ const InteractiveHero: React.FC = () => {
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%239C92AC%22 fill-opacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
       
+      {/* Animated gradient orbs */}
+      <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center min-h-screen">
+        <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-200px)]">
           
           {/* Left Column - Hero Content */}
           <div className="space-y-8 text-white">
             {/* Logo and Brand */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 animate-fade-in">
               <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-xl shadow-lg">
                 <BookOpen className="h-8 w-8 text-white" />
               </div>
@@ -190,16 +214,16 @@ const InteractiveHero: React.FC = () => {
             </div>
 
             {/* Main Headline */}
-            <div>
+            <div className="animate-slide-up">
               <div className="flex items-center space-x-2 mb-4">
-                <Sparkles className="h-6 w-6 text-yellow-400" />
+                <Sparkles className="h-6 w-6 text-yellow-400 animate-pulse" />
                 <span className="text-yellow-400 font-semibold text-sm uppercase tracking-wide">
                   Transform Your Future
                 </span>
               </div>
               <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
                 Master Every
-                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent block">
+                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent block animate-pulse">
                   Technology
                 </span>
                 <span className="text-white">Domain</span>
@@ -212,11 +236,11 @@ const InteractiveHero: React.FC = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
               {stats.map((stat, index) => {
                 const Icon = stat.icon;
                 return (
-                  <div key={stat.label} className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                  <div key={stat.label} className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105">
                     <Icon className="h-6 w-6 text-blue-400 mx-auto mb-2" />
                     <div className="text-2xl font-bold text-white">{stat.number}</div>
                     <div className="text-sm text-gray-300">{stat.label}</div>
@@ -226,11 +250,11 @@ const InteractiveHero: React.FC = () => {
             </div>
 
             {/* Key Features */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in" style={{ animationDelay: '0.5s' }}>
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
-                  <div key={feature.title} className="flex items-start space-x-3 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                  <div key={feature.title} className="flex items-start space-x-3 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105">
                     <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-lg flex-shrink-0">
                       <Icon className="h-5 w-5 text-white" />
                     </div>
@@ -244,7 +268,7 @@ const InteractiveHero: React.FC = () => {
             </div>
 
             {/* Tech Categories Preview */}
-            <div>
+            <div className="animate-fade-in" style={{ animationDelay: '0.7s' }}>
               <p className="text-sm font-medium text-gray-300 mb-3 flex items-center space-x-2">
                 <TrendingUp className="h-4 w-4" />
                 <span>Popular Learning Paths:</span>
@@ -255,7 +279,8 @@ const InteractiveHero: React.FC = () => {
                   return (
                     <div
                       key={category.name}
-                      className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 cursor-pointer"
+                      className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 cursor-pointer hover:scale-105"
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       <div className={`bg-gradient-to-r ${category.color} w-4 h-4 rounded-full flex items-center justify-center`}>
                         <Icon className="h-2.5 w-2.5 text-white" />
@@ -271,7 +296,7 @@ const InteractiveHero: React.FC = () => {
           {/* Right Column - 3D Scene and Auth Form */}
           <div className="lg:pl-8 space-y-8">
             {/* 3D Spline Scene */}
-            <div className="relative h-96 w-full rounded-2xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-purple-900/20 backdrop-blur-sm border border-white/10">
+            <div className="relative h-[500px] w-full rounded-2xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-purple-900/20 backdrop-blur-sm border border-white/10 shadow-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
               <Suspense fallback={
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center text-white">
@@ -291,23 +316,37 @@ const InteractiveHero: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
               
               {/* Floating elements */}
-              <div className="absolute top-4 left-4 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
+              <div className="absolute top-4 left-4 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20 animate-pulse">
                 <div className="flex items-center space-x-2 text-white">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                   <span className="text-xs font-medium">Interactive Learning</span>
                 </div>
               </div>
               
-              <div className="absolute bottom-4 right-4 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
+              <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20 animate-pulse" style={{ animationDelay: '0.5s' }}>
                 <div className="flex items-center space-x-2 text-white">
                   <Zap className="h-3 w-3 text-yellow-400" />
                   <span className="text-xs font-medium">AI-Powered</span>
                 </div>
               </div>
+
+              <div className="absolute bottom-4 left-4 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20 animate-pulse" style={{ animationDelay: '1s' }}>
+                <div className="flex items-center space-x-2 text-white">
+                  <Brain className="h-3 w-3 text-purple-400" />
+                  <span className="text-xs font-medium">Smart Learning</span>
+                </div>
+              </div>
+              
+              <div className="absolute bottom-4 right-4 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20 animate-pulse" style={{ animationDelay: '1.5s' }}>
+                <div className="flex items-center space-x-2 text-white">
+                  <Rocket className="h-3 w-3 text-blue-400" />
+                  <span className="text-xs font-medium">Fast Track</span>
+                </div>
+              </div>
             </div>
 
             {/* Authentication Form */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 shadow-2xl">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 shadow-2xl animate-slide-up" style={{ animationDelay: '0.4s' }}>
               {/* Form Header */}
               <div className="text-center mb-8">
                 <h2 className="text-2xl font-bold text-white mb-2">
@@ -342,7 +381,7 @@ const InteractiveHero: React.FC = () => {
               <button
                 onClick={handleGoogleSignIn}
                 disabled={loading || !isFirebaseReady}
-                className="w-full flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3 font-medium text-white hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-6"
+                className="w-full flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3 font-medium text-white hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-6 hover:scale-105"
               >
                 {loading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -381,7 +420,7 @@ const InteractiveHero: React.FC = () => {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
+                      className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all hover:bg-white/15"
                       placeholder="Enter your full name"
                       disabled={loading}
                     />
@@ -399,7 +438,7 @@ const InteractiveHero: React.FC = () => {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-10 pr-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
+                      className="w-full pl-10 pr-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all hover:bg-white/15"
                       placeholder="Enter your email"
                       disabled={loading}
                     />
@@ -417,7 +456,7 @@ const InteractiveHero: React.FC = () => {
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-10 pr-10 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
+                      className="w-full pl-10 pr-10 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all hover:bg-white/15"
                       placeholder="Enter your password"
                       disabled={loading}
                     />
@@ -435,7 +474,7 @@ const InteractiveHero: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading || !isFirebaseReady}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg"
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg hover:scale-105"
                 >
                   {loading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -460,7 +499,7 @@ const InteractiveHero: React.FC = () => {
                       setPassword('');
                       setName('');
                     }}
-                    className="text-blue-400 hover:text-blue-300 font-medium"
+                    className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
                     disabled={loading}
                   >
                     {isSignUp ? 'Sign In' : 'Sign Up'}
@@ -487,6 +526,48 @@ const InteractiveHero: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Moving Tech Logos Section */}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-black/80 via-purple-900/80 to-black/80 backdrop-blur-sm border-t border-white/10 py-6 overflow-hidden">
+        <div className="relative">
+          {/* Moving logos container */}
+          <div className="flex animate-scroll-right space-x-8">
+            {/* First set of logos */}
+            {techLogos.map((logo, index) => (
+              <div
+                key={`first-${index}`}
+                className="flex items-center space-x-3 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-110 cursor-pointer flex-shrink-0 min-w-max"
+              >
+                <span className="text-2xl">{logo.icon}</span>
+                <span className="text-white font-medium text-sm">{logo.name}</span>
+                <div className={`w-2 h-2 ${logo.bgColor} rounded-full animate-pulse`}></div>
+              </div>
+            ))}
+            {/* Duplicate set for seamless loop */}
+            {techLogos.map((logo, index) => (
+              <div
+                key={`second-${index}`}
+                className="flex items-center space-x-3 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-110 cursor-pointer flex-shrink-0 min-w-max"
+              >
+                <span className="text-2xl">{logo.icon}</span>
+                <span className="text-white font-medium text-sm">{logo.name}</span>
+                <div className={`w-2 h-2 ${logo.bgColor} rounded-full animate-pulse`}></div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Gradient overlays for smooth fade effect */}
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black/80 to-transparent pointer-events-none"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black/80 to-transparent pointer-events-none"></div>
+        </div>
+        
+        {/* Subtitle */}
+        <div className="text-center mt-4">
+          <p className="text-gray-300 text-sm font-medium">
+            🚀 Trusted by developers worldwide • 🌟 Industry-leading platforms • 💡 Learn from the best
+          </p>
         </div>
       </div>
     </section>
