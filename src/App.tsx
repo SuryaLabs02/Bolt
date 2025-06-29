@@ -8,6 +8,7 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import Resources from './pages/Resources';
+import BeforeHackathon from './pages/BeforeHackathon';
 import Events from './pages/Events';
 import News from './pages/News';
 import Profile from './pages/Profile';
@@ -24,6 +25,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/resources" element={<Resources />} />
+              <Route path="/before-hackathon" element={<BeforeHackathon />} />
               <Route path="/events" element={<Events />} />
               <Route path="/news" element={<News />} />
               <Route path="/profile" element={<Profile />} />

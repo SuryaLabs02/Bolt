@@ -11,7 +11,8 @@ import {
   GraduationCap,
   ExternalLink,
   Trophy,
-  Newspaper
+  Newspaper,
+  Calendar
 } from 'lucide-react';
 
 const Header: React.FC = () => {
@@ -24,6 +25,7 @@ const Header: React.FC = () => {
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Courses', href: '/courses', icon: GraduationCap },
     { name: 'Resources', href: '/resources', icon: ExternalLink },
+    { name: 'Before Hackathon', href: '/before-hackathon', icon: Calendar, highlight: true },
     { name: 'Hackathons', href: '/events', icon: Trophy },
     { name: 'News', href: '/news', icon: Newspaper },
   ];
@@ -76,21 +78,30 @@ const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           {isAuthenticated && (
-            <nav className="hidden md:flex space-x-8">
+            <nav className="hidden md:flex space-x-6">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-all relative ${
                       location.pathname === item.href
-                        ? 'text-primary-600 bg-primary-50'
-                        : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
+                        ? item.highlight 
+                          ? 'text-orange-600 bg-orange-50 border border-orange-200'
+                          : 'text-primary-600 bg-primary-50'
+                        : item.highlight
+                          ? 'text-orange-600 hover:text-orange-700 hover:bg-orange-50 border border-transparent hover:border-orange-200'
+                          : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{item.name}</span>
+                    {item.highlight && (
+                      <div className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                        !
+                      </div>
+                    )}
                   </Link>
                 );
               })}
@@ -164,15 +175,24 @@ const Header: React.FC = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium ${
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium relative ${
                       location.pathname === item.href
-                        ? 'text-primary-600 bg-primary-50'
-                        : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
+                        ? item.highlight 
+                          ? 'text-orange-600 bg-orange-50 border border-orange-200'
+                          : 'text-primary-600 bg-primary-50'
+                        : item.highlight
+                          ? 'text-orange-600 hover:text-orange-700 hover:bg-orange-50'
+                          : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{item.name}</span>
+                    {item.highlight && (
+                      <div className="absolute top-1 left-8 bg-orange-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
+                        !
+                      </div>
+                    )}
                   </Link>
                 );
               })}
