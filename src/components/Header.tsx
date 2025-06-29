@@ -39,11 +39,6 @@ const Header: React.FC = () => {
     }
   };
 
-  // Don't show header on landing page for non-authenticated users
-  if (location.pathname === '/' && !isAuthenticated && !loading) {
-    return null;
-  }
-
   if (loading) {
     return (
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
