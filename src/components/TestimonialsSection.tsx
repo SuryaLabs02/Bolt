@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Star, Users, Calendar, ThumbsUp, Shield, Share, Clock, ArrowLeft, ArrowRight } from 'lucide-react';
 
+interface MousePosition {
+  x: number;
+  y: number;
+}
+
 interface Testimonial {
   id: number;
   name: string;
@@ -25,7 +30,9 @@ const TestimonialsSection: React.FC = () => {
   const [activeCard, setActiveCard] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const [dragDirection, setDragDirection] = useState<'left' | 'right' | null>(null);
+  const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef<number>(0);
 
   const testimonials: Testimonial[] = [
@@ -78,6 +85,25 @@ const TestimonialsSection: React.FC = () => {
       featured: false
     }
   ];
+
+  // Mouse tracking for dynamic background
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        setMousePosition({
+          x: ((e.clientX - rect.left) / rect.width) * 100,
+          y: ((e.clientY - rect.top) / rect.height) * 100,
+        });
+      }
+    };
+
+    const sectionElement = sectionRef.current;
+    if (sectionElement) {
+      sectionElement.addEventListener('mousemove', handleMouseMove);
+      return () => sectionElement.removeEventListener('mousemove', handleMouseMove);
+    }
+  }, []);
 
   // Auto-rotate testimonials
   useEffect(() => {
@@ -141,9 +167,9 @@ const TestimonialsSection: React.FC = () => {
 
   const getAvatarGradient = (id: number) => {
     const gradients = [
-      'from-purple-500 to-blue-500',
-      'from-green-500 to-teal-500',
-      'from-orange-500 to-red-500'
+      'from-purple-400 via-pink-400 to-cyan-400',
+      'from-green-400 via-blue-400 to-purple-400',
+      'from-orange-400 via-red-400 to-pink-400'
     ];
     return gradients[(id - 1) % gradients.length];
   };
@@ -151,24 +177,81 @@ const TestimonialsSection: React.FC = () => {
   const getTagColor = (tag: string) => {
     switch (tag.toLowerCase()) {
       case 'featured':
-        return 'bg-primary-500/20 text-primary-400 border-primary-500/30';
+        return 'bg-purple-500/20 text-purple-300 border-purple-400/30';
       case 'enterprise':
-        return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
+        return 'bg-blue-500/20 text-blue-300 border-blue-400/30';
       case 'verified':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
+        return 'bg-green-500/20 text-green-300 border-green-400/30';
       case 'startup':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+        return 'bg-cyan-500/20 text-cyan-300 border-cyan-400/30';
+      case 'mobile':
+        return 'bg-pink-500/20 text-pink-300 border-pink-400/30';
+      case 'api user':
+        return 'bg-orange-500/20 text-orange-300 border-orange-400/30';
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+        return 'bg-gray-500/20 text-gray-300 border-gray-400/30';
     }
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 relative overflow-hidden">
-      {/* Background Effects */}
+    <section 
+      ref={sectionRef}
+      className="relative min-h-screen py-20 overflow-hidden"
+      style={{
+        background: `
+          radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, 
+            rgba(139, 92, 246, 0.15) 0%, 
+            rgba(59, 130, 246, 0.1) 25%, 
+            rgba(16, 185, 129, 0.05) 50%, 
+            transparent 70%),
+          linear-gradient(135deg, 
+            #0f172a 0%, 
+            #581c87 25%, 
+            #1e1b4b 50%, 
+            #0f172a 75%, 
+            #164e63 100%)
+        `,
+        transition: 'background 0.3s ease-out'
+      }}
+    >
+      {/* Animated Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+        {/* Floating Particles */}
+        {Array.from({ length: 30 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-white rounded-full opacity-20 animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 3}s`,
+              transform: `translate(${(mousePosition.x - 50) * 0.05}px, ${(mousePosition.y - 50) * 0.05}px)`
+            }}
+          />
+        ))}
+
+        {/* Dynamic Gradient Orbs */}
+        <div
+          className="absolute w-96 h-96 rounded-full opacity-10 blur-3xl"
+          style={{
+            background: 'linear-gradient(45deg, #8b5cf6, #3b82f6)',
+            left: `${mousePosition.x * 0.8}%`,
+            top: `${mousePosition.y * 0.8}%`,
+            transform: 'translate(-50%, -50%)',
+            transition: 'all 0.5s ease-out'
+          }}
+        />
+        <div
+          className="absolute w-64 h-64 rounded-full opacity-8 blur-2xl"
+          style={{
+            background: 'linear-gradient(135deg, #10b981, #06b6d4)',
+            left: `${100 - mousePosition.x * 0.6}%`,
+            top: `${100 - mousePosition.y * 0.6}%`,
+            transform: 'translate(-50%, -50%)',
+            transition: 'all 0.4s ease-out'
+          }}
+        />
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -177,7 +260,7 @@ const TestimonialsSection: React.FC = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             What Our Students Say
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Join thousands of developers, engineers, and tech professionals who have transformed their careers with SkillSync Academy
           </p>
         </div>
@@ -209,7 +292,7 @@ const TestimonialsSection: React.FC = () => {
                 }`}
                 style={{
                   gridArea: 'stack',
-                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%)',
+                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.7) 100%)',
                   backdropFilter: 'blur(20px)',
                   border: '1px solid rgba(148, 163, 184, 0.2)',
                   borderRadius: '16px',
@@ -229,20 +312,26 @@ const TestimonialsSection: React.FC = () => {
                   {/* Header */}
                   <div className="flex items-start justify-between mb-6">
                     <div className="flex items-center space-x-4">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${getAvatarGradient(testimonial.id)} flex items-center justify-center text-white font-semibold text-lg`}>
+                      <div 
+                        className={`w-12 h-12 rounded-xl bg-gradient-to-r ${getAvatarGradient(testimonial.id)} flex items-center justify-center text-white font-semibold text-lg`}
+                        style={{
+                          filter: `hue-rotate(${mousePosition.x * 2}deg)`,
+                          transition: 'filter 0.3s ease-out'
+                        }}
+                      >
                         {testimonial.avatar}
                       </div>
                       <div>
                         <h3 className="text-white font-semibold text-lg">{testimonial.name}</h3>
-                        <p className="text-gray-400 text-sm">{testimonial.role} at {testimonial.company}</p>
+                        <p className="text-gray-300 text-sm">{testimonial.role} at {testimonial.company}</p>
                       </div>
                     </div>
                     
                     {/* Drag Indicator */}
                     <div className="flex space-x-1 opacity-50">
-                      <div className="w-1 h-1 bg-gray-400 rounded-full" />
-                      <div className="w-1 h-1 bg-gray-400 rounded-full" />
-                      <div className="w-1 h-1 bg-gray-400 rounded-full" />
+                      <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse" />
+                      <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+                      <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
                     </div>
                   </div>
 
@@ -254,12 +343,12 @@ const TestimonialsSection: React.FC = () => {
                   </div>
 
                   {/* Content */}
-                  <blockquote className="text-gray-300 leading-relaxed text-lg mb-6">
+                  <blockquote className="text-gray-200 leading-relaxed text-lg mb-6">
                     "{testimonial.content}"
                   </blockquote>
 
                   {/* Footer */}
-                  <div className="flex items-center justify-between border-t border-gray-700/50 pt-4">
+                  <div className="flex items-center justify-between border-t border-gray-600/30 pt-4">
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2">
                       {testimonial.tags.map((tag, tagIndex) => (
@@ -273,7 +362,7 @@ const TestimonialsSection: React.FC = () => {
                     </div>
 
                     {/* Stats */}
-                    <div className="flex items-center space-x-4 text-xs text-gray-500">
+                    <div className="flex items-center space-x-4 text-xs text-gray-400">
                       {testimonial.stats.teamSize && (
                         <span className="flex items-center space-x-1">
                           <Users className="h-3 w-3" />
@@ -325,8 +414,8 @@ const TestimonialsSection: React.FC = () => {
                 onClick={() => navigateToCard(index + 1)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   activeCard === index + 1
-                    ? 'bg-primary-500 scale-125'
-                    : 'bg-gray-600 hover:bg-gray-500'
+                    ? 'bg-purple-400 scale-125 shadow-lg shadow-purple-400/50'
+                    : 'bg-gray-500 hover:bg-gray-400'
                 }`}
               />
             ))}
@@ -336,7 +425,7 @@ const TestimonialsSection: React.FC = () => {
           <div className="absolute top-1/2 -translate-y-1/2 -left-16 hidden lg:block">
             <button
               onClick={() => navigateToCard(activeCard === 1 ? 3 : activeCard - 1)}
-              className="w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 group"
+              className="w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 group hover:scale-110"
             >
               <ArrowLeft className="h-5 w-5 group-hover:-translate-x-0.5 transition-transform" />
             </button>
@@ -345,7 +434,7 @@ const TestimonialsSection: React.FC = () => {
           <div className="absolute top-1/2 -translate-y-1/2 -right-16 hidden lg:block">
             <button
               onClick={() => navigateToCard(activeCard === 3 ? 1 : activeCard + 1)}
-              className="w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 group"
+              className="w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 group hover:scale-110"
             >
               <ArrowRight className="h-5 w-5 group-hover:translate-x-0.5 transition-transform" />
             </button>
@@ -353,7 +442,7 @@ const TestimonialsSection: React.FC = () => {
 
           {/* Swipe Hint */}
           <div className="text-center mt-6">
-            <p className="text-gray-500 text-sm flex items-center justify-center space-x-2">
+            <p className="text-gray-400 text-sm flex items-center justify-center space-x-2">
               <span>←</span>
               <span>Drag cards to navigate</span>
               <span>→</span>
@@ -364,22 +453,25 @@ const TestimonialsSection: React.FC = () => {
         {/* Trust Indicators */}
         <div className="mt-16 text-center">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-white mb-2">10K+</div>
-              <div className="text-gray-400 text-sm">Happy Students</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-white mb-2">4.9/5</div>
-              <div className="text-gray-400 text-sm">Average Rating</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-white mb-2">500+</div>
-              <div className="text-gray-400 text-sm">Companies Trust Us</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-white mb-2">95%</div>
-              <div className="text-gray-400 text-sm">Success Rate</div>
-            </div>
+            {[
+              { number: '10K+', label: 'Happy Students', icon: '👥' },
+              { number: '4.9/5', label: 'Average Rating', icon: '⭐' },
+              { number: '500+', label: 'Companies Trust Us', icon: '🏢' },
+              { number: '95%', label: 'Success Rate', icon: '🎯' }
+            ].map((stat, index) => (
+              <div 
+                key={index}
+                className="text-center p-6 rounded-xl backdrop-blur-sm bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer group"
+                style={{
+                  transform: `translateY(${Math.sin((mousePosition.x + mousePosition.y + index * 30) * 0.01) * 3}px)`,
+                  transition: 'transform 0.3s ease-out'
+                }}
+              >
+                <div className="text-2xl mb-2">{stat.icon}</div>
+                <div className="text-3xl font-bold text-white mb-2 group-hover:scale-110 transition-transform">{stat.number}</div>
+                <div className="text-gray-300 text-sm">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
