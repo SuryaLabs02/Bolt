@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import StudyAssistantChatbot from './components/StudyAssistantChatbot';
+import OnboardingChatbot from './components/OnboardingChatbot';
+import LoadingScreen from './components/LoadingScreen';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
@@ -14,6 +16,21 @@ import News from './pages/News';
 import Profile from './pages/Profile';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Show loading screen for 5 seconds
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <AuthProvider>
       <Router>
@@ -33,6 +50,7 @@ function App() {
           </main>
           <Footer />
           <StudyAssistantChatbot />
+          <OnboardingChatbot />
         </div>
       </Router>
     </AuthProvider>
