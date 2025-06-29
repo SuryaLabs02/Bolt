@@ -49,6 +49,7 @@ const News: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [hoveredArticle, setHoveredArticle] = useState<string | null>(null);
   const [previewData, setPreviewData] = useState<any>(null);
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
   const categories = [
     'All', 'Technology', 'AI & ML', 'Web Development', 'Cybersecurity', 'Blockchain', 
@@ -95,10 +96,123 @@ const News: React.FC = () => {
     { name: 'Science Magazine', url: 'https://science.org', category: 'Science', description: 'Scientific breakthroughs', favicon: '🧪' }
   ];
 
-  // Generate comprehensive tech news articles
+  // Category-specific thumbnail mappings
+  const getCategoryThumbnail = (category: string, title: string) => {
+    const categoryThumbnails: { [key: string]: string[] } = {
+      'Technology': [
+        'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/159304/network-cable-ethernet-computer-159304.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/325229/pexels-photo-325229.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'AI & ML': [
+        'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/8439093/pexels-photo-8439093.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/8386434/pexels-photo-8386434.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/8439094/pexels-photo-8439094.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/8386422/pexels-photo-8386422.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'Web Development': [
+        'https://images.pexels.com/photos/11035471/pexels-photo-11035471.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/11035539/pexels-photo-11035539.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/270348/pexels-photo-270348.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'Cybersecurity': [
+        'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/5380664/pexels-photo-5380664.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/5483077/pexels-photo-5483077.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/5380665/pexels-photo-5380665.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/5483078/pexels-photo-5483078.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'Blockchain': [
+        'https://images.pexels.com/photos/844124/pexels-photo-844124.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/315788/pexels-photo-315788.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/1447418/pexels-photo-1447418.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/1447419/pexels-photo-1447419.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'Cloud Computing': [
+        'https://images.pexels.com/photos/667295/pexels-photo-667295.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/1181298/pexels-photo-1181298.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/1181355/pexels-photo-1181355.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/1181356/pexels-photo-1181356.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'Mobile Development': [
+        'https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/404280/pexels-photo-404280.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/1092671/pexels-photo-1092671.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'Data Science': [
+        'https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/669615/pexels-photo-669615.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/590020/pexels-photo-590020.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/669610/pexels-photo-669610.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'DevOps': [
+        'https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/325229/pexels-photo-325229.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/159304/network-cable-ethernet-computer-159304.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'Programming': [
+        'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/574071/pexels-photo-574071.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/270348/pexels-photo-270348.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'Startups': [
+        'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/3184293/pexels-photo-3184293.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/3184294/pexels-photo-3184294.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/3184295/pexels-photo-3184295.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'Business': [
+        'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/3184293/pexels-photo-3184293.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/3184294/pexels-photo-3184294.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/3184295/pexels-photo-3184295.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'Science': [
+        'https://images.pexels.com/photos/159888/pexels-photo-159888.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/2280568/pexels-photo-2280568.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/2280570/pexels-photo-2280570.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ],
+      'Innovation': [
+        'https://images.pexels.com/photos/159888/pexels-photo-159888.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/325229/pexels-photo-325229.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2',
+        'https://images.pexels.com/photos/159304/network-cable-ethernet-computer-159304.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2'
+      ]
+    };
+
+    const categoryImages = categoryThumbnails[category] || categoryThumbnails['Technology'];
+    // Use title hash to consistently select the same image for the same article
+    const titleHash = title.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    const imageIndex = Math.abs(titleHash) % categoryImages.length;
+    return categoryImages[imageIndex];
+  };
+
+  // Generate comprehensive tech news articles with randomization for refresh
   const generateTechNews = (): NewsArticle[] => {
-    const techTopics = [
-      // AI & ML News
+    const techTopicsPool = [
+      // AI & ML News Pool
       { title: 'OpenAI Announces GPT-5 with Revolutionary Multimodal Capabilities', category: 'AI & ML', source: 'TechCrunch' },
       { title: 'Google\'s Gemini AI Surpasses GPT-4 in Latest Benchmarks', category: 'AI & ML', source: 'MIT Technology Review' },
       { title: 'Meta Releases Open Source AI Model Rivaling ChatGPT', category: 'AI & ML', source: 'The Verge' },
@@ -107,8 +221,10 @@ const News: React.FC = () => {
       { title: 'NVIDIA\'s New AI Chips Break Performance Records', category: 'AI & ML', source: 'Ars Technica' },
       { title: 'DeepMind Solves Complex Protein Folding Problems', category: 'AI & ML', source: 'Nature' },
       { title: 'AI-Powered Code Generation Reaches 90% Accuracy', category: 'AI & ML', source: 'GitHub Blog' },
+      { title: 'Large Language Models Transform Scientific Research', category: 'AI & ML', source: 'MIT Technology Review' },
+      { title: 'Computer Vision Breakthrough in Medical Diagnosis', category: 'AI & ML', source: 'Nature' },
       
-      // Web Development News
+      // Web Development News Pool
       { title: 'React 19 Beta Released with Game-Changing Server Components', category: 'Web Development', source: 'The Verge' },
       { title: 'Next.js 15 Introduces Revolutionary Performance Optimizations', category: 'Web Development', source: 'CSS-Tricks' },
       { title: 'Vue.js 4.0 Alpha Brings Composition API Enhancements', category: 'Web Development', source: 'Smashing Magazine' },
@@ -117,102 +233,138 @@ const News: React.FC = () => {
       { title: 'WebAssembly Gains Native DOM Access Capabilities', category: 'Web Development', source: 'Mozilla Blog' },
       { title: 'Progressive Web Apps Reach Native Performance Parity', category: 'Web Development', source: 'Google Developers' },
       { title: 'CSS Container Queries Transform Responsive Design', category: 'Web Development', source: 'CSS-Tricks' },
+      { title: 'TypeScript 5.5 Introduces Advanced Type Features', category: 'Web Development', source: 'Microsoft Blog' },
+      { title: 'Vite 5.0 Revolutionizes Frontend Build Tools', category: 'Web Development', source: 'Dev.to' },
       
-      // Cybersecurity News
+      // Cybersecurity News Pool
       { title: 'Major Security Vulnerability Discovered in Popular Docker Images', category: 'Cybersecurity', source: 'KrebsOnSecurity' },
       { title: 'Zero-Day Exploit Affects Millions of WordPress Sites', category: 'Cybersecurity', source: 'The Hacker News' },
       { title: 'New Ransomware Strain Targets Cloud Infrastructure', category: 'Cybersecurity', source: 'ZDNet' },
       { title: 'Quantum-Resistant Encryption Standards Finalized', category: 'Cybersecurity', source: 'Ars Technica' },
       { title: 'AI-Powered Threat Detection Reduces Response Time by 80%', category: 'Cybersecurity', source: 'VentureBeat' },
       { title: 'Supply Chain Attacks Increase 300% in Enterprise Software', category: 'Cybersecurity', source: 'The Hacker News' },
+      { title: 'Critical Vulnerability Found in Popular JavaScript Libraries', category: 'Cybersecurity', source: 'GitHub Blog' },
+      { title: 'Biometric Authentication Systems Face New Threats', category: 'Cybersecurity', source: 'KrebsOnSecurity' },
       
-      // Blockchain News
+      // Blockchain News Pool
       { title: 'Ethereum 2.0 Staking Rewards Reach All-Time High', category: 'Blockchain', source: 'CoinDesk' },
       { title: 'Bitcoin Lightning Network Processes Record Transactions', category: 'Blockchain', source: 'Cointelegraph' },
       { title: 'Central Bank Digital Currencies Gain Global Adoption', category: 'Blockchain', source: 'CoinDesk' },
       { title: 'DeFi Protocols Introduce Revolutionary Yield Farming', category: 'Blockchain', source: 'Cointelegraph' },
       { title: 'NFT Marketplace Integrates AI-Generated Content', category: 'Blockchain', source: 'The Verge' },
       { title: 'Web3 Gaming Platforms Reach 10 Million Users', category: 'Blockchain', source: 'TechCrunch' },
+      { title: 'Layer 2 Solutions Reduce Ethereum Gas Fees by 95%', category: 'Blockchain', source: 'CoinDesk' },
+      { title: 'Cross-Chain Bridges Enable Seamless Asset Transfer', category: 'Blockchain', source: 'Cointelegraph' },
       
-      // Cloud Computing News
+      // Cloud Computing News Pool
       { title: 'AWS Launches New AI-Powered Development Tools', category: 'Cloud Computing', source: 'AWS News' },
       { title: 'Google Cloud Introduces Quantum Computing Services', category: 'Cloud Computing', source: 'Google Cloud Blog' },
       { title: 'Microsoft Azure Achieves Carbon Negative Operations', category: 'Cloud Computing', source: 'Microsoft Azure Blog' },
       { title: 'Serverless Computing Adoption Grows 400% Year-over-Year', category: 'Cloud Computing', source: 'TechCrunch' },
       { title: 'Multi-Cloud Strategies Become Enterprise Standard', category: 'Cloud Computing', source: 'ZDNet' },
       { title: 'Edge Computing Infrastructure Expands Globally', category: 'Cloud Computing', source: 'Engadget' },
+      { title: 'Kubernetes Adoption Reaches 90% in Large Enterprises', category: 'Cloud Computing', source: 'TechRadar' },
+      { title: 'Cloud Security Spending Increases 250% Annually', category: 'Cloud Computing', source: 'VentureBeat' },
       
-      // Mobile Development News
+      // Mobile Development News Pool
       { title: 'Flutter 4.0 Brings Native Performance to Web Applications', category: 'Mobile Development', source: 'Google Developers' },
       { title: 'React Native 0.75 Introduces New Architecture', category: 'Mobile Development', source: 'Meta Developers' },
       { title: 'iOS 18 Features Advanced SwiftUI Components', category: 'Mobile Development', source: 'iOS Dev Weekly' },
       { title: 'Android 15 Enhances Privacy and Security Features', category: 'Mobile Development', source: 'Android Developers Blog' },
       { title: 'Cross-Platform Development Tools Reach Maturity', category: 'Mobile Development', source: 'TechRadar' },
       { title: '5G Integration Transforms Mobile App Capabilities', category: 'Mobile Development', source: 'The Verge' },
+      { title: 'Progressive Web Apps Gain Native App Store Support', category: 'Mobile Development', source: 'Google Developers' },
+      { title: 'Mobile AR Development Frameworks Advance Rapidly', category: 'Mobile Development', source: 'TechCrunch' },
       
-      // Data Science News
+      // Data Science News Pool
       { title: 'Large Language Models Revolutionize Data Analysis', category: 'Data Science', source: 'Towards Data Science' },
       { title: 'AutoML Platforms Democratize Machine Learning', category: 'Data Science', source: 'KDnuggets' },
       { title: 'Real-Time Analytics Reach Petabyte Scale Processing', category: 'Data Science', source: 'VentureBeat' },
       { title: 'Federated Learning Enables Privacy-Preserving AI', category: 'Data Science', source: 'MIT Technology Review' },
       { title: 'Quantum Machine Learning Shows Promising Results', category: 'Data Science', source: 'Nature' },
       { title: 'MLOps Adoption Accelerates in Enterprise Environments', category: 'Data Science', source: 'TechCrunch' },
+      { title: 'Data Mesh Architecture Transforms Enterprise Analytics', category: 'Data Science', source: 'Towards Data Science' },
+      { title: 'Synthetic Data Generation Solves Privacy Challenges', category: 'Data Science', source: 'KDnuggets' },
       
-      // DevOps News
+      // DevOps News Pool
       { title: 'Kubernetes 1.30 Introduces Advanced Security Features', category: 'DevOps', source: 'Kubernetes Blog' },
       { title: 'Docker Desktop Adds AI-Powered Container Optimization', category: 'DevOps', source: 'Docker Blog' },
       { title: 'GitOps Practices Become Industry Standard', category: 'DevOps', source: 'GitHub Blog' },
       { title: 'Infrastructure as Code Adoption Reaches 85%', category: 'DevOps', source: 'HashiCorp Blog' },
       { title: 'CI/CD Pipelines Integrate Advanced Testing Automation', category: 'DevOps', source: 'Stack Overflow Blog' },
       { title: 'Observability Tools Enhance System Reliability', category: 'DevOps', source: 'New Relic Blog' },
+      { title: 'Platform Engineering Emerges as Key DevOps Trend', category: 'DevOps', source: 'TechCrunch' },
+      { title: 'Service Mesh Adoption Simplifies Microservices', category: 'DevOps', source: 'Kubernetes Blog' },
       
-      // Programming News
+      // Programming News Pool
       { title: 'Rust Programming Language Gains Enterprise Adoption', category: 'Programming', source: 'Stack Overflow Blog' },
       { title: 'Python 3.13 Introduces Performance Improvements', category: 'Programming', source: 'Python.org' },
       { title: 'TypeScript 5.5 Features Advanced Type System', category: 'Programming', source: 'Microsoft Blog' },
       { title: 'Go 1.23 Enhances Concurrency Capabilities', category: 'Programming', source: 'Go Blog' },
       { title: 'WebAssembly Adoption Grows in Enterprise Applications', category: 'Programming', source: 'Mozilla Blog' },
       { title: 'Low-Code Platforms Transform Software Development', category: 'Programming', source: 'Gartner' },
+      { title: 'Functional Programming Paradigms Gain Popularity', category: 'Programming', source: 'Dev.to' },
+      { title: 'Code Quality Tools Integrate AI-Powered Analysis', category: 'Programming', source: 'GitHub Blog' },
       
-      // Startups News
+      // Startups News Pool
       { title: 'AI Startup Raises $100M Series A for Code Generation', category: 'Startups', source: 'TechCrunch' },
       { title: 'Quantum Computing Startup Achieves Breakthrough', category: 'Startups', source: 'VentureBeat' },
       { title: 'Fintech Unicorn Revolutionizes Digital Payments', category: 'Startups', source: 'Product Hunt' },
       { title: 'Climate Tech Startups Attract Record Investment', category: 'Startups', source: 'Y Combinator' },
       { title: 'EdTech Platform Reaches 50 Million Students', category: 'Startups', source: 'Fast Company' },
       { title: 'HealthTech Innovation Transforms Patient Care', category: 'Startups', source: 'TechCrunch' },
+      { title: 'Space Tech Startup Launches Satellite Constellation', category: 'Startups', source: 'VentureBeat' },
+      { title: 'Robotics Startup Automates Warehouse Operations', category: 'Startups', source: 'Product Hunt' },
       
-      // Business News
+      // Business News Pool
       { title: 'Remote Work Technology Spending Increases 250%', category: 'Business', source: 'Harvard Business Review' },
       { title: 'Digital Transformation Accelerates Across Industries', category: 'Business', source: 'McKinsey' },
       { title: 'Sustainability Metrics Drive Technology Investments', category: 'Business', source: 'Fast Company' },
       { title: 'Automation Reshapes Workforce Development Strategies', category: 'Business', source: 'MIT Sloan' },
       { title: 'Data Privacy Regulations Impact Global Tech Companies', category: 'Business', source: 'Harvard Business Review' },
       { title: 'Venture Capital Funding Reaches New Heights in Q4', category: 'Business', source: 'PitchBook' },
+      { title: 'Enterprise Software Market Grows 15% Annually', category: 'Business', source: 'Fast Company' },
+      { title: 'Tech Talent Shortage Drives Salary Increases', category: 'Business', source: 'Harvard Business Review' },
       
-      // Innovation News
-      { title: 'Breakthrough in Quantum Internet Communication', category: 'Innovation', source: 'Science Magazine' },
-      { title: 'Brain-Computer Interfaces Achieve New Milestones', category: 'Innovation', source: 'Nature' },
-      { title: 'Fusion Energy Reactor Achieves Net Energy Gain', category: 'Innovation', source: 'MIT Technology Review' },
-      { title: 'Space Technology Enables Global Internet Coverage', category: 'Innovation', source: 'SpaceX Blog' },
-      { title: 'Biotechnology Advances Personalized Medicine', category: 'Innovation', source: 'Nature Biotechnology' },
-      { title: 'Renewable Energy Storage Breakthrough Announced', category: 'Innovation', source: 'Clean Technica' }
+      // Science News Pool
+      { title: 'Breakthrough in Quantum Internet Communication', category: 'Science', source: 'Science Magazine' },
+      { title: 'Brain-Computer Interfaces Achieve New Milestones', category: 'Science', source: 'Nature' },
+      { title: 'Fusion Energy Reactor Achieves Net Energy Gain', category: 'Science', source: 'MIT Technology Review' },
+      { title: 'Space Technology Enables Global Internet Coverage', category: 'Science', source: 'SpaceX Blog' },
+      { title: 'Biotechnology Advances Personalized Medicine', category: 'Science', source: 'Nature Biotechnology' },
+      { title: 'Renewable Energy Storage Breakthrough Announced', category: 'Science', source: 'Clean Technica' },
+      { title: 'Gene Editing Technology Treats Rare Diseases', category: 'Science', source: 'Nature' },
+      { title: 'Nanotechnology Revolutionizes Drug Delivery', category: 'Science', source: 'Science Magazine' },
+      
+      // Innovation News Pool
+      { title: 'Autonomous Vehicles Achieve Level 5 Automation', category: 'Innovation', source: 'MIT Technology Review' },
+      { title: 'Smart Cities Initiative Transforms Urban Planning', category: 'Innovation', source: 'Fast Company' },
+      { title: 'Augmented Reality Glasses Enter Consumer Market', category: 'Innovation', source: 'The Verge' },
+      { title: 'Sustainable Technology Solutions Combat Climate Change', category: 'Innovation', source: 'Wired' },
+      { title: 'Neural Interfaces Enable Direct Brain Control', category: 'Innovation', source: 'Nature' },
+      { title: 'Holographic Displays Transform Entertainment Industry', category: 'Innovation', source: 'TechCrunch' },
+      { title: 'Advanced Materials Enable Flexible Electronics', category: 'Innovation', source: 'MIT Technology Review' },
+      { title: 'Robotic Surgery Systems Improve Patient Outcomes', category: 'Innovation', source: 'Science Magazine' }
     ];
 
-    return techTopics.map((topic, index) => {
+    // Shuffle and select random articles for each refresh
+    const shuffledTopics = [...techTopicsPool].sort(() => Math.random() - 0.5);
+    const selectedTopics = shuffledTopics.slice(0, Math.min(150, shuffledTopics.length));
+
+    return selectedTopics.map((topic, index) => {
       const publishedDate = new Date();
       publishedDate.setHours(publishedDate.getHours() - Math.floor(Math.random() * 72)); // Random time within last 3 days
       
       const sourceData = newsSources.find(s => s.name === topic.source) || newsSources[0];
       
       return {
-        id: `news-${index}`,
+        id: `news-${index}-${Date.now()}`,
         title: topic.title,
         description: `${topic.title.split(' ').slice(0, 15).join(' ')}... Read more about this breaking development in ${topic.category.toLowerCase()}.`,
         url: `${sourceData.url}/article/${topic.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`,
         source: topic.source,
         publishedAt: publishedDate.toISOString(),
-        urlToImage: `https://images.pexels.com/photos/${1000000 + index}/pexels-photo-${1000000 + index}.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2`,
+        urlToImage: getCategoryThumbnail(topic.category, topic.title),
         category: topic.category,
         author: `${topic.source} Editorial Team`,
         content: `This is a comprehensive article about ${topic.title.toLowerCase()}. The development represents a significant advancement in the field of ${topic.category.toLowerCase()}.`,
@@ -224,6 +376,15 @@ const News: React.FC = () => {
   useEffect(() => {
     fetchNews();
   }, [selectedCategory]);
+
+  // Auto-refresh news every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchNews();
+    }, 300000); // 5 minutes
+
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchNews = async () => {
     try {
@@ -250,6 +411,7 @@ const News: React.FC = () => {
       }
       
       setArticles(filteredArticles);
+      setLastRefresh(new Date());
     } catch (err) {
       setError('Failed to fetch news articles');
       console.error('Error fetching news:', err);
@@ -306,6 +468,7 @@ const News: React.FC = () => {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Tech News</h1>
             <p className="text-gray-600">Stay updated with the latest technology trends and announcements from {newsSources.length}+ sources</p>
+            <p className="text-sm text-gray-500 mt-1">Last updated: {lastRefresh.toLocaleTimeString()}</p>
           </div>
           
           {/* Controls */}
@@ -459,7 +622,7 @@ const News: React.FC = () => {
                         alt={article.title}
                         className="w-full h-48 md:h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&dpr=2';
+                          (e.target as HTMLImageElement).src = getCategoryThumbnail(article.category, article.title);
                         }}
                       />
                     </div>

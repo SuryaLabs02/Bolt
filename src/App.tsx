@@ -8,7 +8,6 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import YouTubeCourses from './pages/YouTubeCourses';
-import Resources from './pages/Resources';
 import Events from './pages/Events';
 import Hackathons from './pages/Hackathons';
 import News from './pages/News';
@@ -26,7 +25,6 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/youtube-courses" element={<YouTubeCourses />} />
-              <Route path="/resources" element={<Resources />} />
               <Route path="/events" element={<Events />} />
               <Route path="/hackathons" element={<Hackathons />} />
               <Route path="/news" element={<News />} />
