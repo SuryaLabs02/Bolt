@@ -47,8 +47,6 @@ const News: React.FC = () => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hoveredArticle, setHoveredArticle] = useState<string | null>(null);
-  const [previewData, setPreviewData] = useState<any>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
   const categories = [
@@ -420,22 +418,6 @@ const News: React.FC = () => {
     }
   };
 
-  const handleArticleHover = async (articleId: string, url: string) => {
-    setHoveredArticle(articleId);
-    
-    // Simulate fetching preview data
-    const mockPreviewData = {
-      title: 'Article Preview',
-      description: 'This is a preview of the article content...',
-      image: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&dpr=2',
-      domain: url.split('/')[2] || 'example.com',
-      readTime: '3 min read',
-      tags: ['Technology', 'Innovation', 'News']
-    };
-    
-    setPreviewData(mockPreviewData);
-  };
-
   const openArticle = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
@@ -608,12 +590,7 @@ const News: React.FC = () => {
               {filteredArticles.map((article, index) => (
                 <article 
                   key={article.id} 
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 relative group"
-                  onMouseEnter={() => handleArticleHover(article.id, article.url)}
-                  onMouseLeave={() => {
-                    setHoveredArticle(null);
-                    setPreviewData(null);
-                  }}
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 group"
                 >
                   <div className="md:flex">
                     <div className="md:w-1/3">
@@ -677,34 +654,6 @@ const News: React.FC = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* Hover Preview */}
-                  {hoveredArticle === article.id && previewData && (
-                    <div className="absolute top-4 right-4 bg-white rounded-lg shadow-xl border border-gray-200 p-4 w-80 z-10">
-                      <div className="flex items-start space-x-3">
-                        <img
-                          src={previewData.image}
-                          alt="Preview"
-                          className="w-16 h-16 object-cover rounded-lg"
-                        />
-                        <div className="flex-1">
-                          <h4 className="font-medium text-gray-900 text-sm mb-1">Quick Preview</h4>
-                          <p className="text-xs text-gray-600 mb-2">{previewData.description}</p>
-                          <div className="flex items-center justify-between text-xs text-gray-500">
-                            <span>{previewData.domain}</span>
-                            <span>{previewData.readTime}</span>
-                          </div>
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {previewData.tags.map((tag: string, tagIndex: number) => (
-                              <span key={tagIndex} className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </article>
               ))}
             </div>

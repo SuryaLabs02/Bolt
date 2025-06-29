@@ -24,7 +24,7 @@ const Header: React.FC = () => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Courses', href: '/courses', icon: GraduationCap },
-    { name: 'YouTube Courses', href: '/youtube-courses', icon: Youtube, highlight: true },
+    { name: 'YouTube Courses', href: '/youtube-courses', icon: Youtube },
     { name: 'Events', href: '/events', icon: Calendar },
     { name: 'Hackathons', href: '/hackathons', icon: Trophy },
     { name: 'News', href: '/news', icon: Newspaper },
@@ -85,23 +85,14 @@ const Header: React.FC = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-all relative ${
+                    className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${
                       location.pathname === item.href
-                        ? item.highlight 
-                          ? 'text-red-600 bg-red-50 border border-red-200'
-                          : 'text-primary-600 bg-primary-50'
-                        : item.highlight
-                          ? 'text-red-600 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200'
-                          : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
+                        ? 'text-primary-600 bg-primary-50'
+                        : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{item.name}</span>
-                    {item.highlight && (
-                      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
-                        !
-                      </div>
-                    )}
                   </Link>
                 );
               })}
@@ -175,24 +166,15 @@ const Header: React.FC = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium relative ${
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium ${
                       location.pathname === item.href
-                        ? item.highlight 
-                          ? 'text-red-600 bg-red-50 border border-red-200'
-                          : 'text-primary-600 bg-primary-50'
-                        : item.highlight
-                          ? 'text-red-600 hover:text-red-700 hover:bg-red-50'
-                          : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
+                        ? 'text-primary-600 bg-primary-50'
+                        : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{item.name}</span>
-                    {item.highlight && (
-                      <div className="absolute top-1 left-8 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
-                        !
-                      </div>
-                    )}
                   </Link>
                 );
               })}

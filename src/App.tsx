@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import OnboardingChatbot from './components/OnboardingChatbot';
+import StudyAssistantChatbot from './components/StudyAssistantChatbot';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
@@ -32,7 +32,7 @@ function App() {
             </Routes>
           </main>
           <Footer />
-          <OnboardingChatbot />
+          <StudyAssistantChatbot />
         </div>
       </Router>
     </AuthProvider>
