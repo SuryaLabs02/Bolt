@@ -56,7 +56,7 @@ const Header: React.FC = () => {
               <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-2 rounded-lg">
                 <BookOpen className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">InnovateX Campus</span>
+              <span className="text-xl font-bold text-gray-900">SkillSync Academy</span>
             </Link>
             <div className="animate-pulse">
               <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
@@ -76,7 +76,7 @@ const Header: React.FC = () => {
             <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-2 rounded-lg">
               <BookOpen className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">InnovateX Campus</span>
+            <span className="text-xl font-bold text-gray-900">SkillSync Academy</span>
           </Link>
 
           {/* Navigation - Only show for authenticated users */}

@@ -169,7 +169,7 @@ What would you like to learn today?`,
     try {
       setIsLoading(true);
       
-      const prompt = `You are a helpful study assistant for InnovateX Campus. A student asked: "${userQuery}"
+      const prompt = `You are a helpful study assistant for SkillSync Academy. A student asked: "${userQuery}"
 
 I found these relevant courses:
 ${foundCourses.map(course => `- ${course.title}: ${course.description}`).join('\n')}

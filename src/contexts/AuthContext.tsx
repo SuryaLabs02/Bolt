@@ -101,7 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       achievements: []
     };
     setUser(userData);
-    localStorage.setItem('techlearn_user', JSON.stringify(userData));
+    localStorage.setItem('skillsync_user', JSON.stringify(userData));
   };
 
   const signInWithGoogle = async () => {
@@ -235,7 +235,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = (userData: User) => {
     setUser(userData);
-    localStorage.setItem('techlearn_user', JSON.stringify(userData));
+    localStorage.setItem('skillsync_user', JSON.stringify(userData));
   };
 
   const logout = async () => {
@@ -243,7 +243,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // If Firebase is not configured, just clear local state
       setUser(null);
       setFirebaseUser(null);
-      localStorage.removeItem('techlearn_user');
+      localStorage.removeItem('skillsync_user');
       return;
     }
 
@@ -251,7 +251,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await signOut(auth);
       setUser(null);
       setFirebaseUser(null);
-      localStorage.removeItem('techlearn_user');
+      localStorage.removeItem('skillsync_user');
     } catch (error: any) {
       console.error('Logout error:', error);
       throw new Error('Failed to sign out');

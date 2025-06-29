@@ -35,7 +35,7 @@ const Footer: React.FC = () => {
   const socialLinks = [
     { name: 'GitHub', icon: Github, href: 'https://github.com/Sujay-Patel-GitHub' },
     { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/sujayr07/?hl=en' },
-    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/innovatex-campus' },
+    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/skillsync-academy' },
     { name: 'Email', icon: Mail, href: 'mailto:sujaypatel07@gmail.com' },
   ];
 
@@ -50,7 +50,7 @@ const Footer: React.FC = () => {
               <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-2 rounded-lg">
                 <BookOpen className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold">InnovateX Campus</span>
+              <span className="text-xl font-bold">SkillSync Academy</span>
             </Link>
             <p className="text-gray-400 mb-6 max-w-sm">
               Master every technology domain with comprehensive courses, hands-on projects, and expert guidance. 
@@ -198,7 +198,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center space-x-2 text-sm text-gray-400 mb-4 md:mb-0">
-              <span>© {currentYear} InnovateX Campus. All rights reserved.</span>
+              <span>© {currentYear} SkillSync Academy. All rights reserved.</span>
               <span>•</span>
               <span className="flex items-center space-x-1">
                 <span>Made with</span>
