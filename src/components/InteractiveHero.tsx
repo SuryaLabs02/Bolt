@@ -1,104 +1,321 @@
-import React, { useState, useEffect, Suspense } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import Spline from '@splinetool/react-spline';
-import { 
-  ArrowRight, 
-  BookOpen, 
-  Users, 
-  Award, 
-  Zap,
-  Globe,
-  Code,
-  Database,
-  Shield,
-  Cloud,
-  Cpu,
-  Smartphone,
-  Gamepad2,
-  Bitcoin,
-  Trophy,
-  Star,
-  Play,
-  CheckCircle,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  Loader2,
-  AlertCircle,
-  Github,
-  Sparkles,
-  Target,
-  TrendingUp,
-  Rocket,
-  Brain,
-  Palette,
-  Monitor,
-  ChevronDown,
-  X
-} from 'lucide-react';
+import { ArrowRight, Sparkles, Code, Cpu, Database, Mail, Lock, User, Eye, EyeOff, AlertCircle, ExternalLink, BookOpen, Star, Users, Award, Home, GraduationCap, Calendar, Newspaper, Menu, X, Settings } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+
+interface MousePosition {
+  x: number;
+  y: number;
+}
 
 const InteractiveHero: React.FC = () => {
-  const { signInWithGoogle, signInWithEmail, signUpWithEmail, isAuthenticated, isFirebaseReady } = useAuth();
-  const [showAuthForm, setShowAuthForm] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const { isAuthenticated, signInWithGoogle, signInWithEmail, signUpWithEmail, isFirebaseReady } = useAuth();
+  const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [splineLoaded, setSplineLoaded] = useState(false);
+  const [showPopupHelp, setShowPopupHelp] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [isInIframe, setIsInIframe] = useState(false);
+  const [showExploreSignIn, setShowExploreSignIn] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showFirebaseSetup, setShowFirebaseSetup] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    name: ''
+  });
+  const heroRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
 
-  const stats = [
-    { number: '50K+', label: 'Active Students', icon: Users, color: 'from-emerald-400 to-teal-500' },
-    { number: '500+', label: 'Expert Courses', icon: BookOpen, color: 'from-violet-400 to-purple-500' },
-    { number: '95%', label: 'Success Rate', icon: Target, color: 'from-orange-400 to-red-500' },
-    { number: '4.9★', label: 'Student Rating', icon: Star, color: 'from-yellow-400 to-amber-500' }
+  const navigation = [
+    { name: 'Dashboard', href: '/dashboard', icon: Home },
+    { name: 'Courses', href: '/courses', icon: GraduationCap },
+    { name: 'YouTube Courses', href: '/youtube-courses', icon: ExternalLink },
+    { name: 'Events', href: '/events', icon: Calendar },
+    { name: 'News', href: '/news', icon: Newspaper },
   ];
 
-  const techCategories = [
-    { name: 'Programming', icon: Code, color: 'from-blue-400 to-cyan-500', bgColor: 'bg-blue-500/10' },
-    { name: 'AI & ML', icon: Cpu, color: 'from-purple-400 to-violet-500', bgColor: 'bg-purple-500/10' },
-    { name: 'Data Science', icon: Database, color: 'from-green-400 to-emerald-500', bgColor: 'bg-green-500/10' },
-    { name: 'Cybersecurity', icon: Shield, color: 'from-red-400 to-rose-500', bgColor: 'bg-red-500/10' },
-    { name: 'Cloud Computing', icon: Cloud, color: 'from-indigo-400 to-blue-500', bgColor: 'bg-indigo-500/10' },
-    { name: 'Web Development', icon: Globe, color: 'from-orange-400 to-yellow-500', bgColor: 'bg-orange-500/10' },
-    { name: 'Mobile Dev', icon: Smartphone, color: 'from-pink-400 to-rose-500', bgColor: 'bg-pink-500/10' },
-    { name: 'Game Dev', icon: Gamepad2, color: 'from-yellow-400 to-orange-500', bgColor: 'bg-yellow-500/10' },
-    { name: 'Blockchain', icon: Bitcoin, color: 'from-teal-400 to-cyan-500', bgColor: 'bg-teal-500/10' },
+  useEffect(() => {
+    // Check if running in iframe
+    setIsInIframe(window !== window.top);
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect();
+        setMousePosition({
+          x: ((e.clientX - rect.left) / rect.width) * 100,
+          y: ((e.clientY - rect.top) / rect.height) * 100,
+        });
+      }
+    };
+
+    const heroElement = heroRef.current;
+    if (heroElement) {
+      heroElement.addEventListener('mousemove', handleMouseMove);
+      return () => heroElement.removeEventListener('mousemove', handleMouseMove);
+    }
+  }, []);
+
+  const handleGetStarted = () => {
+    if (isAuthenticated) {
+      // If already authenticated, go to dashboard with animation
+      setIsLoading(true);
+      setLoadingProgress(0);
+      
+      const interval = setInterval(() => {
+        setLoadingProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              setIsLoading(false);
+              window.location.href = '/dashboard';
+            }, 500);
+            return 100;
+          }
+          return prev + Math.random() * 15 + 5;
+        });
+      }, 150);
+    } else {
+      // Check if Firebase is configured
+      if (!isFirebaseReady) {
+        setShowFirebaseSetup(true);
+        return;
+      }
+      
+      // Show sign-in screen
+      setShowSignIn(true);
+      setAuthError(null);
+      setShowPopupHelp(false);
+      setIsRedirecting(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    // Check Firebase configuration first
+    if (!isFirebaseReady) {
+      setAuthError('Firebase is not properly configured. Please set up your Firebase project first.');
+      setShowFirebaseSetup(true);
+      return;
+    }
+
+    // If in iframe, show special message
+    if (isInIframe) {
+      setAuthError('Google sign-in doesn\'t work in preview mode. Please click "Open in New Tab" above to test authentication features.');
+      setShowPopupHelp(true);
+      return;
+    }
+
+    try {
+      setAuthError(null);
+      setShowPopupHelp(false);
+      setIsRedirecting(false);
+      setIsLoading(true);
+      setLoadingProgress(0);
+      
+      // Start progress animation
+      const progressInterval = setInterval(() => {
+        setLoadingProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90; // Stop at 90% until auth completes
+          }
+          return prev + Math.random() * 10 + 5;
+        });
+      }, 200);
+
+      await signInWithGoogle();
+      
+      // If we reach here, authentication was successful
+      setLoadingProgress(100);
+      setTimeout(() => {
+        setIsLoading(false);
+        setShowSignIn(false);
+        setShowExploreSignIn(false);
+        // Redirect to dashboard after successful sign-in
+        window.location.href = '/dashboard';
+      }, 1000);
+      
+    } catch (error: any) {
+      console.error('Google sign-in error:', error);
+      
+      // Check if this is a redirect in progress (not an actual error)
+      if (error.message && error.message.includes('redirect')) {
+        setIsRedirecting(true);
+        setAuthError('Redirecting to Google sign-in...');
+        // Don't stop loading as redirect is happening
+        return;
+      }
+      
+      // Handle actual errors
+      if (error.message && error.message.includes('popup')) {
+        setAuthError('Pop-up blocked! We\'re trying to redirect you to Google sign-in. If this doesn\'t work, please allow pop-ups for this site or use email sign-in instead.');
+        setShowPopupHelp(true);
+      } else if (error.message && error.message.includes('Firebase configuration')) {
+        setAuthError('Firebase is not properly configured. Please set up your Firebase project.');
+        setShowFirebaseSetup(true);
+      } else {
+        setAuthError(error.message || 'Google sign-in failed. Please try email sign-in or contact support.');
+      }
+      
+      setIsLoading(false);
+      setLoadingProgress(0);
+    }
+  };
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Check Firebase configuration first
+    if (!isFirebaseReady) {
+      setAuthError('Firebase is not properly configured. Please set up your Firebase project first.');
+      setShowFirebaseSetup(true);
+      return;
+    }
+    
+    if (!formData.email || !formData.password) {
+      setAuthError('Please fill in all required fields');
+      return;
+    }
+
+    if (authMode === 'signup' && !formData.name) {
+      setAuthError('Please enter your name');
+      return;
+    }
+
+    try {
+      setAuthError(null);
+      setShowPopupHelp(false);
+      setIsRedirecting(false);
+      setIsLoading(true);
+      setLoadingProgress(0);
+      
+      // Start progress animation
+      const progressInterval = setInterval(() => {
+        setLoadingProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + Math.random() * 10 + 5;
+        });
+      }, 200);
+
+      if (authMode === 'signin') {
+        await signInWithEmail(formData.email, formData.password);
+      } else {
+        await signUpWithEmail(formData.email, formData.password, formData.name);
+      }
+      
+      // Complete progress
+      setLoadingProgress(100);
+      setTimeout(() => {
+        setIsLoading(false);
+        setShowSignIn(false);
+        setShowExploreSignIn(false);
+        setFormData({ email: '', password: '', name: '' });
+        // Redirect to dashboard after successful sign-in
+        window.location.href = '/dashboard';
+      }, 1000);
+      
+    } catch (error: any) {
+      console.error('Email auth error:', error);
+      
+      if (error.message && error.message.includes('Firebase configuration')) {
+        setAuthError('Firebase is not properly configured. Please set up your Firebase project.');
+        setShowFirebaseSetup(true);
+      } else {
+        setAuthError(error.message || `Failed to ${authMode === 'signin' ? 'sign in' : 'sign up'}. Please try again.`);
+      }
+      
+      setIsLoading(false);
+      setLoadingProgress(0);
+    }
+  };
+
+  const handleLetsStudy = () => {
+    setIsLoading(true);
+    setLoadingProgress(0);
+    
+    // Exactly 5 seconds animation
+    const totalDuration = 5000; // 5 seconds
+    const intervalTime = 50; // Update every 50ms
+    const totalSteps = totalDuration / intervalTime;
+    let currentStep = 0;
+    
+    const interval = setInterval(() => {
+      currentStep++;
+      const progress = (currentStep / totalSteps) * 100;
+      
+      setLoadingProgress(progress);
+      
+      if (currentStep >= totalSteps) {
+        clearInterval(interval);
+        setLoadingProgress(100);
+        setTimeout(() => {
+          setIsLoading(false);
+          
+          // Check if user is authenticated
+          if (isAuthenticated) {
+            // If authenticated, go to courses
+            window.location.href = '/courses';
+          } else {
+            // If not authenticated, show sign-in popup
+            if (!isFirebaseReady) {
+              setShowFirebaseSetup(true);
+            } else {
+              setShowExploreSignIn(true);
+              setAuthError(null);
+              setShowPopupHelp(false);
+              setIsRedirecting(false);
+            }
+          }
+        }, 500);
+      }
+    }, intervalTime);
+  };
+
+  const openInNewTab = () => {
+    window.open(window.location.href, '_blank');
+  };
+
+  const floatingIcons = [
+    { Icon: Code, delay: 0, x: 10, y: 20 },
+    { Icon: Cpu, delay: 1, x: 85, y: 15 },
+    { Icon: Database, delay: 2, x: 15, y: 75 },
+    { Icon: Sparkles, delay: 0.5, x: 80, y: 70 },
   ];
 
   const features = [
     {
       icon: BookOpen,
-      title: 'Interactive Learning',
-      description: 'Hands-on projects and real-world applications',
-      color: 'from-blue-400 to-cyan-500',
-      bgColor: 'bg-blue-500/10'
-    },
-    {
-      icon: Trophy,
-      title: 'Industry Recognition',
-      description: 'Certificates valued by top tech companies',
-      color: 'from-yellow-400 to-orange-500',
-      bgColor: 'bg-yellow-500/10'
+      title: 'All Courses in One Place',
+      description: 'Comprehensive learning platform with every technology course you need',
+      color: 'from-blue-500 to-blue-600'
     },
     {
       icon: Users,
-      title: 'Expert Mentorship',
-      description: '1-on-1 guidance from industry professionals',
-      color: 'from-purple-400 to-violet-500',
-      bgColor: 'bg-purple-500/10'
+      title: 'Live Events & Updates',
+      description: 'Real-time workshops, webinars, and latest tech industry information',
+      color: 'from-green-500 to-green-600'
     },
     {
-      icon: Zap,
-      title: 'Fast-Track Learning',
-      description: 'Accelerated paths to master new skills',
-      color: 'from-emerald-400 to-teal-500',
-      bgColor: 'bg-emerald-500/10'
+      icon: Award,
+      title: 'Complete Hackathon Experience',
+      description: 'Join exciting hackathons and coding competitions worldwide',
+      color: 'from-purple-500 to-purple-600'
     }
+  ];
+
+  const stats = [
+    { number: '50+', label: 'Tech Domains', icon: '🎯' },
+    { number: '10K+', label: 'Students', icon: '👥' },
+    { number: '24/7', label: 'Support', icon: '🚀' }
   ];
 
   // Moving tech logos data
@@ -117,270 +334,325 @@ const InteractiveHero: React.FC = () => {
     { name: 'GitHub', icon: '🐱', color: 'text-gray-300', bgColor: 'bg-gray-500/20' },
   ];
 
-  const handleGoogleSignIn = async () => {
-    if (!isFirebaseReady) {
-      setError('Authentication service is not ready. Please try again in a moment.');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    try {
-      await signInWithGoogle();
-    } catch (error: any) {
-      console.error('Google sign-in error:', error);
-      setError(error.message || 'Failed to sign in with Google');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEmailAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!isFirebaseReady) {
-      setError('Authentication service is not ready. Please try again in a moment.');
-      return;
-    }
-
-    if (!email || !password) {
-      setError('Please fill in all fields');
-      return;
-    }
-
-    if (isSignUp && !name) {
-      setError('Please enter your name');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-
-    try {
-      if (isSignUp) {
-        await signUpWithEmail(email, password, name);
-      } else {
-        await signInWithEmail(email, password);
-      }
-    } catch (error: any) {
-      console.error('Email auth error:', error);
-      setError(error.message || `Failed to ${isSignUp ? 'sign up' : 'sign in'}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // If user is authenticated, show dashboard link
-  if (isAuthenticated) {
-    return (
-      <section className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center px-4 relative overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%239C92AC%22 fill-opacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
-        
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="mb-8">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 rounded-2xl inline-block mb-6 shadow-2xl">
-              <BookOpen className="h-12 w-12 text-white" />
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Welcome back to <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">SkillSync Academy</span>
-            </h1>
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Continue your learning journey with personalized courses and expert guidance.
-            </p>
-          </div>
-          
-          <Link
-            to="/dashboard"
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 text-lg inline-flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-          >
-            <span>Continue Learning</span>
-            <ArrowRight className="h-5 w-5" />
-          </Link>
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 relative overflow-hidden">
-      {/* Enhanced Background Effects */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%239C92AC%22 fill-opacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
-      
-      {/* Floating gradient orbs */}
-      <div className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute top-40 right-32 w-80 h-80 bg-gradient-to-r from-violet-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-      <div className="absolute bottom-32 left-32 w-72 h-72 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-      
-      {/* Main Content Container */}
-      <div className="flex min-h-screen">
-        {/* Left Side - Content (60% width) */}
-        <div className="w-3/5 flex items-center justify-center px-8 lg:px-16 relative z-10">
-          <div className="max-w-3xl space-y-12 text-white">
-            
-            {/* Logo and Brand */}
-            <div className="flex items-center space-x-4 animate-fade-in">
-              <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-4 rounded-2xl shadow-lg">
-                <BookOpen className="h-10 w-10 text-white" />
+    <>
+      <section 
+        ref={heroRef}
+        className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
+        style={{
+          background: `
+            radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, 
+              rgba(139, 92, 246, 0.3) 0%, 
+              rgba(59, 130, 246, 0.2) 25%, 
+              rgba(16, 185, 129, 0.1) 50%, 
+              transparent 70%),
+            linear-gradient(135deg, 
+              #0f172a 0%, 
+              #581c87 25%, 
+              #1e1b4b 50%, 
+              #0f172a 75%, 
+              #164e63 100%)
+          `,
+          transition: 'background 0.3s ease-out'
+        }}
+      >
+        {/* Firebase Configuration Warning */}
+        {!isFirebaseReady && (
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50">
+            <div className="bg-orange-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2">
+              <Settings className="h-4 w-4" />
+              <span className="text-sm">Firebase setup required for authentication</span>
+              <button 
+                onClick={() => setShowFirebaseSetup(true)}
+                className="text-orange-200 hover:text-white underline text-sm"
+              >
+                Setup Guide
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Iframe Notice */}
+        {isInIframe && (
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50" style={{ marginTop: !isFirebaseReady ? '3rem' : '0' }}>
+            <div className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2">
+              <AlertCircle className="h-4 w-4" />
+              <span className="text-sm">For full functionality, </span>
+              <button 
+                onClick={openInNewTab}
+                className="text-blue-200 hover:text-white underline text-sm flex items-center space-x-1"
+              >
+                <span>open in new tab</span>
+                <ExternalLink className="h-3 w-3" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Header */}
+        <header className="absolute top-0 left-0 right-0 z-40 bg-black/20 backdrop-blur-sm border-b border-white/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              {/* Logo */}
+              <Link to="/" className="flex items-center space-x-2">
+                <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-2 rounded-lg">
+                  <BookOpen className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-xl font-bold text-white">SkillSync Academy</span>
+              </Link>
+
+              {/* Desktop Navigation */}
+              <nav className="hidden md:flex space-x-8">
+                {navigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                        location.pathname === item.href
+                          ? 'text-primary-300 bg-white/10'
+                          : 'text-white/80 hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              {/* Bolt Badge - Larger Size */}
+              <div className="hidden md:flex items-center space-x-3 bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+                <img 
+                  src="/black_circle_360x360.png" 
+                  alt="Made with Bolt" 
+                  className="w-8 h-8 opacity-90"
+                />
+                <span className="text-white/90 text-sm font-medium">Made with Bolt</span>
               </div>
-              <div>
-                <span className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">SkillSync Academy</span>
-                <p className="text-gray-300 text-sm">Master Every Technology Domain</p>
-              </div>
+
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="md:hidden p-2 rounded-md text-white/80 hover:text-white hover:bg-white/10"
+              >
+                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
             </div>
 
-            {/* Main Headline */}
-            <div className="animate-slide-up space-y-8">
-              <div className="flex items-center space-x-3 mb-6">
-                <Sparkles className="h-8 w-8 text-yellow-400 animate-pulse" />
-                <span className="text-yellow-400 font-bold text-lg uppercase tracking-wide">
-                  Transform Your Future
-                </span>
+            {/* Mobile Navigation */}
+            {isMenuOpen && (
+              <div className="md:hidden py-4 border-t border-white/10">
+                <nav className="space-y-2">
+                  {navigation.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium ${
+                          location.pathname === item.href
+                            ? 'text-primary-300 bg-white/10'
+                            : 'text-white/80 hover:text-white hover:bg-white/10'
+                        }`}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span>{item.name}</span>
+                      </Link>
+                    );
+                  })}
+                </nav>
+                
+                {/* Mobile Bolt Badge */}
+                <div className="mt-4 pt-4 border-t border-white/10">
+                  <div className="flex items-center space-x-3 px-3">
+                    <img 
+                      src="/black_circle_360x360.png" 
+                      alt="Made with Bolt" 
+                      className="w-6 h-6 opacity-80"
+                    />
+                    <span className="text-white/80 text-sm">Made with Bolt</span>
+                  </div>
+                </div>
               </div>
-              
-              <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-                <span className="block text-white">Master</span>
-                <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent block animate-pulse">
-                  Technology
+            )}
+          </div>
+        </header>
+
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          {/* Floating Particles */}
+          {Array.from({ length: 50 }).map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-white rounded-full opacity-20 animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${2 + Math.random() * 3}s`,
+                transform: `translate(${(mousePosition.x - 50) * 0.1}px, ${(mousePosition.y - 50) * 0.1}px)`
+              }}
+            />
+          ))}
+
+          {/* Floating Tech Icons */}
+          {floatingIcons.map(({ Icon, delay, x, y }, index) => (
+            <div
+              key={index}
+              className="absolute opacity-10 text-white animate-bounce"
+              style={{
+                left: `${x}%`,
+                top: `${y}%`,
+                animationDelay: `${delay}s`,
+                animationDuration: '3s',
+                transform: `translate(${(mousePosition.x - 50) * 0.05}px, ${(mousePosition.y - 50) * 0.05}px)`,
+                transition: 'transform 0.3s ease-out'
+              }}
+            >
+              <Icon className="h-12 w-12 md:h-16 md:w-16" />
+            </div>
+          ))}
+
+          {/* Dynamic Gradient Orbs */}
+          <div
+            className="absolute w-96 h-96 rounded-full opacity-20 blur-3xl"
+            style={{
+              background: 'linear-gradient(45deg, #8b5cf6, #3b82f6)',
+              left: `${mousePosition.x * 0.8}%`,
+              top: `${mousePosition.y * 0.8}%`,
+              transform: 'translate(-50%, -50%)',
+              transition: 'all 0.5s ease-out'
+            }}
+          />
+          <div
+            className="absolute w-64 h-64 rounded-full opacity-15 blur-2xl"
+            style={{
+              background: 'linear-gradient(135deg, #10b981, #06b6d4)',
+              left: `${100 - mousePosition.x * 0.6}%`,
+              top: `${100 - mousePosition.y * 0.6}%`,
+              transform: 'translate(-50%, -50%)',
+              transition: 'all 0.4s ease-out'
+            }}
+          />
+        </div>
+
+        {/* Hero Content */}
+        <div className="relative z-10 flex items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8 pt-16">
+          <div className="text-center max-w-6xl mx-auto">
+            {/* Main Heading */}
+            <div className="mb-12 animate-fade-in">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 leading-tight">
+                Master
+                <span 
+                  className="block bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent animate-pulse"
+                  style={{
+                    filter: `hue-rotate(${mousePosition.x * 3.6}deg)`,
+                    transition: 'filter 0.3s ease-out'
+                  }}
+                >
+                  Every Tech
                 </span>
-                <span className="block text-white">Excellence</span>
+                <span className="block text-white">Domain</span>
               </h1>
               
-              <p className="text-xl text-gray-300 max-w-2xl leading-relaxed">
-                From programming fundamentals to cutting-edge AI, accelerate your tech career with 
-                <span className="text-cyan-400 font-semibold"> comprehensive courses</span>, 
-                <span className="text-purple-400 font-semibold"> hands-on projects</span>, and 
-                <span className="text-emerald-400 font-semibold"> expert mentorship</span>.
+              <p className="text-xl md:text-2xl text-gray-300 mb-6 max-w-4xl mx-auto leading-relaxed">
+                Transform your career with comprehensive tech education. From AI and programming to cybersecurity and blockchain - master the skills that matter.
+              </p>
+              
+              <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
+                Join thousands of students building their future with hands-on projects, expert mentorship, and real-world experience.
               </p>
             </div>
 
-            {/* Enhanced Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              {stats.map((stat, index) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={stat.label} className="group relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 rounded-xl blur-lg group-hover:blur-xl transition-all duration-300"></div>
-                    <div className="relative text-center p-4 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:border-white/20">
-                      <div className={`bg-gradient-to-r ${stat.color} w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-3 shadow-lg`}>
-                        <Icon className="h-5 w-5 text-white" />
-                      </div>
-                      <div className="text-2xl font-bold text-white mb-1">{stat.number}</div>
-                      <div className="text-xs text-gray-300 font-medium">{stat.label}</div>
-                    </div>
-                  </div>
-                );
-              })}
+            {/* Interactive Stats */}
+            <div className="grid grid-cols-3 gap-6 mb-12 max-w-3xl mx-auto animate-slide-up">
+              {stats.map((stat, index) => (
+                <div 
+                  key={index}
+                  className="text-center p-6 rounded-xl backdrop-blur-sm bg-white/10 border border-white/20 hover:bg-white/15 transition-all duration-300 cursor-pointer group"
+                  style={{
+                    transform: `translateY(${Math.sin((mousePosition.x + mousePosition.y + index * 30) * 0.01) * 5}px)`,
+                    transition: 'transform 0.3s ease-out'
+                  }}
+                >
+                  <div className="text-3xl mb-2">{stat.icon}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-white mb-1 group-hover:scale-110 transition-transform">{stat.number}</div>
+                  <div className="text-sm text-gray-300">{stat.label}</div>
+                </div>
+              ))}
             </div>
 
-            {/* Enhanced Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+            {/* Features Preview */}
+            <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto animate-slide-up">
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
-                  <div key={feature.title} className="group relative">
-                    <div className={`absolute inset-0 ${feature.bgColor} rounded-xl blur-lg group-hover:blur-xl transition-all duration-300`}></div>
-                    <div className="relative flex items-start space-x-3 p-4 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:border-white/20">
-                      <div className={`bg-gradient-to-r ${feature.color} p-2 rounded-lg flex-shrink-0 shadow-lg`}>
-                        <Icon className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-white text-base mb-1">{feature.title}</h3>
-                        <p className="text-gray-300 text-sm">{feature.description}</p>
-                      </div>
+                  <div 
+                    key={index}
+                    className="p-6 rounded-xl backdrop-blur-sm bg-white/10 border border-white/20 hover:bg-white/15 transition-all duration-300 group"
+                    style={{ animationDelay: `${index * 200}ms` }}
+                  >
+                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                      <Icon className="h-6 w-6 text-white" />
                     </div>
+                    <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
+                    <p className="text-gray-300 text-sm">{feature.description}</p>
                   </div>
                 );
               })}
             </div>
 
-            {/* Enhanced Tech Categories */}
-            <div className="animate-fade-in" style={{ animationDelay: '0.7s' }}>
-              <div className="flex items-center space-x-3 mb-4">
-                <TrendingUp className="h-5 w-5 text-emerald-400" />
-                <h3 className="text-lg font-bold text-white">Popular Learning Paths</h3>
-              </div>
-              <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-9 gap-3">
-                {techCategories.map((category, index) => {
-                  const Icon = category.icon;
-                  return (
-                    <div
-                      key={category.name}
-                      className="group relative cursor-pointer"
-                      style={{ animationDelay: `${index * 0.1}s` }}
-                    >
-                      <div className={`absolute inset-0 ${category.bgColor} rounded-xl blur-md group-hover:blur-lg transition-all duration-300`}></div>
-                      <div className="relative text-center p-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-110 hover:border-white/20">
-                        <div className={`bg-gradient-to-r ${category.color} w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2 shadow-lg`}>
-                          <Icon className="h-4 w-4 text-white" />
-                        </div>
-                        <span className="text-xs font-medium text-white block">{category.name}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Call to Action */}
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: '0.9s' }}>
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-slide-up mb-12">
               <button
-                onClick={() => setShowAuthForm(true)}
-                className="group relative overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-xl font-bold text-lg shadow-2xl hover:shadow-cyan-500/25 transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
+                onClick={handleGetStarted}
+                className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-full text-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 min-w-[220px]"
+                style={{
+                  boxShadow: `0 10px 30px rgba(139, 92, 246, ${0.3 + mousePosition.y * 0.003})`
+                }}
               >
-                <span>Get Started Free</span>
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span className="flex items-center justify-center space-x-2">
+                  <span>Start Learning Free</span>
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
               </button>
-              
-              <button className="group flex items-center space-x-2 text-white hover:text-cyan-400 transition-colors duration-300">
-                <div className="bg-white/10 backdrop-blur-sm p-2 rounded-full border border-white/20 group-hover:border-cyan-400/50 transition-all duration-300">
-                  <Play className="h-5 w-5" />
-                </div>
-                <span className="font-medium">Watch Demo</span>
+
+              <button
+                onClick={handleLetsStudy}
+                className="group relative px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-full text-lg hover:bg-white hover:text-gray-900 transition-all duration-300 transform hover:scale-105 min-w-[220px]"
+                style={{
+                  borderColor: `rgba(255, 255, 255, ${0.8 + mousePosition.x * 0.002})`,
+                  boxShadow: `0 10px 30px rgba(255, 255, 255, ${0.1 + mousePosition.x * 0.002})`
+                }}
+              >
+                <span className="flex items-center justify-center space-x-2">
+                  <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
+                  <span>Explore Courses</span>
+                </span>
               </button>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="animate-fade-in">
+              <p className="text-gray-400 text-sm mb-6">Trusted by students worldwide • Join the tech revolution</p>
             </div>
           </div>
         </div>
 
-        {/* Right Side - Spline Scene (40% width) */}
-        <div className="w-2/5 flex items-center justify-center p-8 relative">
-          <div className="relative w-full max-w-lg h-96 rounded-3xl overflow-hidden bg-gradient-to-br from-cyan-500/10 to-purple-500/10 backdrop-blur-xl border border-white/20 shadow-2xl animate-float">
-            <Suspense fallback={
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-cyan-400" />
-                  <p className="text-sm">Loading 3D Experience...</p>
-                </div>
-              </div>
-            }>
-              <Spline 
-                scene="https://prod.spline.design/aXNv3GGDJB6QILuV/scene.splinecode"
-                onLoad={() => setSplineLoaded(true)}
-                style={{ width: '100%', height: '100%' }}
-              />
-            </Suspense>
-            
-            {/* Floating status indicators */}
-            <div className="absolute top-4 left-4 bg-cyan-500/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-cyan-400/30 animate-pulse">
-              <div className="flex items-center space-x-2 text-cyan-300">
-                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                <span className="text-xs font-medium">Interactive</span>
-              </div>
-            </div>
-            
-            <div className="absolute bottom-4 right-4 bg-purple-500/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-purple-400/30 animate-pulse" style={{ animationDelay: '0.5s' }}>
-              <div className="flex items-center space-x-2 text-purple-300">
-                <Sparkles className="h-3 w-3 text-purple-400" />
-                <span className="text-xs font-medium">AI-Powered</span>
-              </div>
-            </div>
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse" />
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Enhanced Moving Tech Logos Section */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-black/90 via-indigo-900/90 to-black/90 backdrop-blur-xl border-t border-white/10 py-6 overflow-hidden">
+      <div className="bg-gradient-to-r from-black/90 via-indigo-900/90 to-black/90 backdrop-blur-xl border-t border-white/10 py-6 overflow-hidden">
         <div className="relative">
           {/* Moving logos container */}
           <div className="flex animate-scroll-right space-x-6">
@@ -423,62 +695,238 @@ const InteractiveHero: React.FC = () => {
         </div>
       </div>
 
-      {/* Authentication Modal */}
-      {showAuthForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-md bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 p-8 shadow-2xl animate-materialReveal">
-            {/* Close Button */}
-            <button
-              onClick={() => setShowAuthForm(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
-            >
-              <X className="h-6 w-6" />
-            </button>
-
-            {/* Form Header */}
-            <div className="text-center mb-8">
-              <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-3 rounded-2xl inline-block mb-4 shadow-lg">
-                <BookOpen className="h-8 w-8 text-white" />
+      {/* All the existing modals remain the same... */}
+      {/* Firebase Setup Modal */}
+      {showFirebaseSetup && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Settings className="h-8 w-8 text-white" />
               </div>
-              <h2 className="text-3xl font-bold text-white mb-2">
-                {isSignUp ? 'Join SkillSync Academy' : 'Welcome Back'}
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Firebase Setup Required
               </h2>
-              <p className="text-gray-300">
-                {isSignUp 
-                  ? 'Start your learning journey today' 
-                  : 'Continue your tech learning journey'
-                }
+              <p className="text-gray-600">
+                To enable authentication features, you need to configure Firebase
               </p>
             </div>
 
-            {/* Error Message */}
-            {error && (
-              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl flex items-start space-x-2">
-                <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
-                <p className="text-red-300 text-sm">{error}</p>
+            <div className="space-y-6">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 className="font-semibold text-blue-900 mb-2">Quick Setup Steps:</h3>
+                <ol className="text-sm text-blue-800 space-y-2 list-decimal list-inside">
+                  <li>Go to <a href="https://console.firebase.google.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-900">Firebase Console</a></li>
+                  <li>Create a new project or select an existing one</li>
+                  <li>Enable Authentication → Sign-in method → Email/Password and Google</li>
+                  <li>Go to Project Settings → General → Your apps</li>
+                  <li>Add a web app and copy the configuration</li>
+                  <li>Update your <code className="bg-blue-100 px-1 rounded">.env</code> file with the values</li>
+                </ol>
+              </div>
+
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h3 className="font-semibold text-gray-900 mb-2">Environment Variables Needed:</h3>
+                <pre className="text-xs text-gray-700 bg-white p-3 rounded border overflow-x-auto">
+{`VITE_FIREBASE_API_KEY=your_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+VITE_FIREBASE_APP_ID=1:123456789:web:abcdef
+VITE_FIREBASE_DATABASE_URL=https://your-project-default-rtdb.firebaseio.com/`}
+                </pre>
+              </div>
+
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <h3 className="font-semibold text-yellow-900 mb-2">⚠️ Important:</h3>
+                <p className="text-sm text-yellow-800">
+                  After updating your <code className="bg-yellow-100 px-1 rounded">.env</code> file, 
+                  restart your development server for the changes to take effect.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center mt-8">
+              <button
+                onClick={() => setShowFirebaseSetup(false)}
+                className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
+              >
+                Close
+              </button>
+              <a
+                href="https://console.firebase.google.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-lg font-medium hover:from-orange-600 hover:to-red-600 transition-all duration-200 flex items-center space-x-2"
+              >
+                <span>Open Firebase Console</span>
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sign In Modal (Regular) */}
+      {showSignIn && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Code className="h-8 w-8 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                {authMode === 'signin' ? 'Welcome Back!' : 'Join SkillSync Academy'}
+              </h2>
+              <p className="text-gray-600">
+                {authMode === 'signin' ? 'Sign in to continue your learning journey' : 'Create your account to get started'}
+              </p>
+            </div>
+
+            {authError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-start space-x-2">
+                  <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-600 text-sm">{authError}</p>
+                </div>
               </div>
             )}
 
-            {/* Firebase Status Warning */}
-            {!isFirebaseReady && (
-              <div className="mb-6 p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl">
-                <p className="text-yellow-300 text-sm">
-                  ⚠️ Authentication service is initializing. Please wait a moment before signing in.
-                </p>
+            {/* Iframe Notice */}
+            {isInIframe && (
+              <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start space-x-2">
+                  <AlertCircle className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-blue-900 mb-1">Preview Mode Limitation</h4>
+                    <p className="text-blue-800 text-sm mb-2">
+                      Google sign-in doesn't work in Bolt's preview mode due to iframe restrictions.
+                    </p>
+                    <button 
+                      onClick={openInNewTab}
+                      className="text-blue-600 hover:text-blue-700 underline text-sm flex items-center space-x-1"
+                    >
+                      <span>Open in new tab to test authentication</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
+
+            {/* Redirect Status */}
+            {isRedirecting && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                  <p className="text-blue-600 text-sm">Redirecting to Google sign-in...</p>
+                </div>
+              </div>
+            )}
+
+            {/* Pop-up Help Section */}
+            {showPopupHelp && !isInIframe && (
+              <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h4 className="font-medium text-blue-900 mb-2">How to allow pop-ups:</h4>
+                <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                  <li>Look for a pop-up blocked icon in your browser's address bar</li>
+                  <li>Click on it and select "Always allow pop-ups from this site"</li>
+                  <li>Refresh the page and try Google sign-in again</li>
+                  <li>Or use email sign-in below as an alternative</li>
+                </ol>
+              </div>
+            )}
+
+            {/* Email Form */}
+            <form onSubmit={handleEmailAuth} className="space-y-4 mb-4">
+              {authMode === 'signup' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      placeholder="Enter your full name"
+                      required={authMode === 'signup'}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Enter your password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'Please wait...' : (authMode === 'signin' ? 'Sign In' : 'Create Account')}
+              </button>
+            </form>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              </div>
+            </div>
 
             {/* Google Sign In */}
             <button
               onClick={handleGoogleSignIn}
-              disabled={loading || !isFirebaseReady}
-              className="w-full flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 font-medium text-white hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-6 hover:scale-105"
+              disabled={isLoading || isRedirecting}
+              className="w-full bg-white border-2 border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-3 mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
+              {isRedirecting ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600"></div>
+                  <span>Redirecting...</span>
+                </>
               ) : (
                 <>
-                  <svg className="h-5 w-5" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -489,73 +937,160 @@ const InteractiveHero: React.FC = () => {
               )}
             </button>
 
+            {/* Toggle Auth Mode */}
+            <div className="text-center">
+              <button
+                onClick={() => {
+                  setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
+                  setAuthError(null);
+                  setShowPopupHelp(false);
+                  setIsRedirecting(false);
+                  setFormData({ email: '', password: '', name: '' });
+                }}
+                disabled={isLoading || isRedirecting}
+                className="text-purple-600 hover:text-purple-700 text-sm transition-colors disabled:opacity-50"
+              >
+                {authMode === 'signin' 
+                  ? "Don't have an account? Sign up" 
+                  : "Already have an account? Sign in"
+                }
+              </button>
+            </div>
+
+            <div className="flex justify-between items-center mt-6">
+              <button
+                onClick={() => {
+                  setShowSignIn(false);
+                  setAuthError(null);
+                  setShowPopupHelp(false);
+                  setIsRedirecting(false);
+                }}
+                disabled={isLoading || isRedirecting}
+                className="text-gray-500 hover:text-gray-700 text-sm transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+
+            <div className="mt-6 text-xs text-gray-500 text-center">
+              By continuing, you agree to our Terms of Service and Privacy Policy
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Explore Courses Sign In Modal */}
+      {showExploreSignIn && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="h-8 w-8 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Ready to Explore Courses?
+              </h2>
+              <p className="text-gray-600">
+                Sign in to access our full course library and track your progress
+              </p>
+            </div>
+
+            {authError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-start space-x-2">
+                  <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-600 text-sm">{authError}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Iframe Notice */}
+            {isInIframe && (
+              <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start space-x-2">
+                  <AlertCircle className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-blue-900 mb-1">Preview Mode Limitation</h4>
+                    <p className="text-blue-800 text-sm mb-2">
+                      Google sign-in doesn't work in Bolt's preview mode due to iframe restrictions.
+                    </p>
+                    <button 
+                      onClick={openInNewTab}
+                      className="text-blue-600 hover:text-blue-700 underline text-sm flex items-center space-x-1"
+                    >
+                      <span>Open in new tab to test authentication</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Quick Sign In with Google */}
+            <button
+              onClick={handleGoogleSignIn}
+              disabled={isLoading || isRedirecting}
+              className="w-full bg-white border-2 border-gray-300 text-gray-700 py-4 px-4 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-3 mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isRedirecting ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600"></div>
+                  <span>Redirecting...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-6 h-6" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                  </svg>
+                  <span className="text-lg">Continue with Google</span>
+                </>
+              )}
+            </button>
+
             {/* Divider */}
-            <div className="relative mb-6">
+            <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/20" />
+                <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-transparent text-gray-300">or</span>
+                <span className="px-2 bg-white text-gray-500">Or use email</span>
               </div>
             </div>
 
-            {/* Email Form */}
-            <form onSubmit={handleEmailAuth} className="space-y-4">
-              {isSignUp && (
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
-                    Full Name
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-white placeholder-gray-400 transition-all hover:bg-white/15"
-                    placeholder="Enter your full name"
-                    disabled={loading}
-                  />
-                </div>
-              )}
-
+            {/* Quick Email Form */}
+            <form onSubmit={handleEmailAuth} className="space-y-4 mb-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
-                  Email Address
-                </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <input
-                    id="email"
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-white placeholder-gray-400 transition-all hover:bg-white/15"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Enter your email"
-                    disabled={loading}
+                    required
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
-                  Password
-                </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <input
-                    id="password"
                     type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-10 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-white placeholder-gray-400 transition-all hover:bg-white/15"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Enter your password"
-                    disabled={loading}
+                    required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
-                    disabled={loading}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
@@ -564,61 +1099,110 @@ const InteractiveHero: React.FC = () => {
 
               <button
                 type="submit"
-                disabled={loading || !isFirebaseReady}
-                className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white py-3 rounded-xl font-semibold hover:from-cyan-700 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg hover:scale-105"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 px-4 rounded-lg font-medium hover:from-green-600 hover:to-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <>
-                    <span>{isSignUp ? 'Create Account' : 'Sign In'}</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </>
-                )}
+                {isLoading ? 'Signing In...' : 'Sign In & Explore Courses'}
               </button>
             </form>
 
-            {/* Toggle Sign Up/Sign In */}
-            <div className="mt-6 text-center">
-              <p className="text-gray-300">
-                {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-                <button
-                  onClick={() => {
-                    setIsSignUp(!isSignUp);
-                    setError('');
-                    setEmail('');
-                    setPassword('');
-                    setName('');
-                  }}
-                  className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
-                  disabled={loading}
-                >
-                  {isSignUp ? 'Sign In' : 'Sign Up'}
-                </button>
-              </p>
+            {/* Toggle to Sign Up */}
+            <div className="text-center">
+              <button
+                onClick={() => {
+                  setAuthMode('signup');
+                  setShowExploreSignIn(false);
+                  setShowSignIn(true);
+                  setAuthError(null);
+                  setShowPopupHelp(false);
+                  setIsRedirecting(false);
+                  setFormData({ email: '', password: '', name: '' });
+                }}
+                disabled={isLoading || isRedirecting}
+                className="text-green-600 hover:text-green-700 text-sm transition-colors disabled:opacity-50"
+              >
+                Don't have an account? Sign up
+              </button>
             </div>
 
-            {/* Trust Indicators */}
-            <div className="mt-6 pt-6 border-t border-white/20">
-              <div className="flex items-center justify-center space-x-4 text-sm text-gray-300">
-                <div className="flex items-center space-x-1">
-                  <Shield className="h-4 w-4" />
-                  <span>Secure</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Users className="h-4 w-4" />
-                  <span>50K+ Students</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                  <span>4.9 Rating</span>
-                </div>
-              </div>
+            <div className="flex justify-between items-center mt-6">
+              <button
+                onClick={() => {
+                  setShowExploreSignIn(false);
+                  setAuthError(null);
+                  setShowPopupHelp(false);
+                  setIsRedirecting(false);
+                  // Go to courses page without authentication
+                  window.location.href = '/courses';
+                }}
+                disabled={isLoading || isRedirecting}
+                className="text-gray-500 hover:text-gray-700 text-sm transition-colors disabled:opacity-50"
+              >
+                Browse without signing in
+              </button>
+            </div>
+
+            <div className="mt-6 text-xs text-gray-500 text-center">
+              Sign in to save progress and access personalized features
             </div>
           </div>
         </div>
       )}
-    </section>
+
+      {/* Loading Screen Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+          <div className="text-center">
+            {/* Animated Logo */}
+            <div className="mb-8">
+              <div className="w-20 h-20 mx-auto mb-4 relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full animate-spin" />
+                <div className="absolute inset-2 bg-slate-900 rounded-full flex items-center justify-center">
+                  <Code className="h-8 w-8 text-white animate-pulse" />
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">Preparing Your Journey</h2>
+              <p className="text-gray-400">Setting up your personalized learning experience...</p>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="w-80 max-w-sm mx-auto">
+              <div className="bg-gray-700 h-2 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-300 ease-out"
+                  style={{ width: `${loadingProgress}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-sm text-gray-400 mt-2">
+                <span>Loading...</span>
+                <span>{Math.round(loadingProgress)}%</span>
+              </div>
+            </div>
+
+            {/* Loading Steps */}
+            <div className="mt-8 space-y-2">
+              {[
+                { step: 'Initializing platform', threshold: 20 },
+                { step: 'Loading course content', threshold: 50 },
+                { step: 'Personalizing experience', threshold: 80 },
+                { step: 'Almost ready!', threshold: 95 }
+              ].map((item, index) => (
+                <div 
+                  key={index}
+                  className={`text-sm transition-all duration-300 ${
+                    loadingProgress >= item.threshold 
+                      ? 'text-green-400 opacity-100' 
+                      : 'text-gray-500 opacity-50'
+                  }`}
+                >
+                  {loadingProgress >= item.threshold && '✓ '}{item.step}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
