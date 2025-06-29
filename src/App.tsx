@@ -24,7 +24,7 @@ function App() {
     // Small delay to ensure smooth transition
     setTimeout(() => {
       setShowMainApp(true);
-    }, 100);
+    }, 200);
   };
 
   if (isLoading) {
@@ -33,8 +33,10 @@ function App() {
 
   return (
     <div 
-      className={`transition-all duration-700 ease-out ${
-        showMainApp ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+      className={`transition-all duration-1000 ease-out ${
+        showMainApp 
+          ? 'scale-100 opacity-100 rotate-0 blur-0' 
+          : 'scale-90 opacity-0 rotate-3 blur-sm'
       }`}
     >
       <AuthProvider>

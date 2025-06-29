@@ -50,8 +50,10 @@ export default {
         'bounce-soft': 'bounce 1s infinite',
         'shapeWave': 'shapeWave 2.4s ease infinite',
         'triangleWave': 'triangleWave 2.4s ease infinite',
-        'zoom-in': 'zoomIn 0.5s ease-out',
-        'zoom-out': 'zoomOut 0.5s ease-in',
+        'particleFloat': 'particleFloat 1s ease-out forwards',
+        'crackExpand': 'crackExpand 0.8s ease-out forwards',
+        'vortexReveal': 'vortexReveal 1s ease-out forwards',
+        'materialReveal': 'materialReveal 1s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
@@ -62,13 +64,55 @@ export default {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
-        zoomIn: {
-          '0%': { transform: 'scale(0.95)', opacity: '0' },
-          '100%': { transform: 'scale(1)', opacity: '1' },
+        particleFloat: {
+          '0%': { 
+            transform: 'translate(0, 0) scale(1) rotate(0deg)',
+            opacity: '1'
+          },
+          '50%': {
+            opacity: '0.8'
+          },
+          '100%': { 
+            transform: 'translate(var(--particle-x, 200px), var(--particle-y, 200px)) scale(0) rotate(720deg)',
+            opacity: '0'
+          },
         },
-        zoomOut: {
-          '0%': { transform: 'scale(1)', opacity: '1' },
-          '100%': { transform: 'scale(1.1)', opacity: '0' },
+        crackExpand: {
+          '0%': { 
+            strokeDashoffset: '100',
+            opacity: '0'
+          },
+          '50%': {
+            opacity: '1'
+          },
+          '100%': { 
+            strokeDashoffset: '0',
+            opacity: '0'
+          },
+        },
+        vortexReveal: {
+          '0%': { 
+            opacity: '0',
+            transform: 'scale(0.8) rotate(-180deg)',
+            filter: 'blur(10px)'
+          },
+          '100%': { 
+            opacity: '1',
+            transform: 'scale(1) rotate(0deg)',
+            filter: 'blur(0px)'
+          },
+        },
+        materialReveal: {
+          '0%': { 
+            transform: 'scale(0.9) rotateY(-15deg)',
+            opacity: '0',
+            filter: 'blur(5px)'
+          },
+          '100%': { 
+            transform: 'scale(1) rotateY(0deg)',
+            opacity: '1',
+            filter: 'blur(0px)'
+          },
         },
         shapeWave: {
           '0%': {
@@ -167,9 +211,13 @@ export default {
         '7': '7px',
       },
       scale: {
+        '90': '0.9',
         '95': '0.95',
         '110': '1.1',
         '150': '1.5',
+      },
+      rotate: {
+        '3': '3deg',
       },
     },
   },

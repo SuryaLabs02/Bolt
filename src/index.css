@@ -33,3 +33,30 @@
     transform: translateY(0);
   }
 }
+
+/* Custom particle animation with dynamic positioning */
+@keyframes particleFloat {
+  0% { 
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% { 
+    transform: translate(calc(var(--random-x, 1) * 400px - 200px), calc(var(--random-y, 1) * 400px - 200px)) scale(0) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Dynamic particle positioning */
+.particle-0 { --random-x: 0.1; --random-y: 0.9; }
+.particle-1 { --random-x: 0.9; --random-y: 0.1; }
+.particle-2 { --random-x: 0.2; --random-y: 0.8; }
+.particle-3 { --random-x: 0.8; --random-y: 0.2; }
+.particle-4 { --random-x: 0.3; --random-y: 0.7; }
+.particle-5 { --random-x: 0.7; --random-y: 0.3; }
+.particle-6 { --random-x: 0.4; --random-y: 0.6; }
+.particle-7 { --random-x: 0.6; --random-y: 0.4; }
+.particle-8 { --random-x: 0.5; --random-y: 0.5; }
+.particle-9 { --random-x: 0.15; --random-y: 0.85; }
