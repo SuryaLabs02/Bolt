@@ -71,7 +71,7 @@ const Header: React.FC = () => {
             <span className="text-xl font-bold text-gray-900">InnovateX Campus</span>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Single Navigation Section */}
           {isAuthenticated && (
             <nav className="hidden md:flex space-x-4">
               {navigation.map((item) => {
@@ -151,7 +151,7 @@ const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation - Single Section */}
         {isMenuOpen && isAuthenticated && (
           <div className="md:hidden py-4 border-t border-gray-200">
             <nav className="space-y-2">
