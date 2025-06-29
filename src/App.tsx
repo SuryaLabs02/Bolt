@@ -7,6 +7,7 @@ import OnboardingChatbot from './components/OnboardingChatbot';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
+import YouTubeCourses from './pages/YouTubeCourses';
 import Resources from './pages/Resources';
 import Events from './pages/Events';
 import Hackathons from './pages/Hackathons';
@@ -24,6 +25,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/courses" element={<Courses />} />
+              <Route path="/youtube-courses" element={<YouTubeCourses />} />
               <Route path="/resources" element={<Resources />} />
               <Route path="/events" element={<Events />} />
               <Route path="/hackathons" element={<Hackathons />} />
