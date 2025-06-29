@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Spline from '@splinetool/react-spline';
 import { 
   ArrowRight, 
   BookOpen, 
@@ -26,7 +27,10 @@ import {
   EyeOff,
   Loader2,
   AlertCircle,
-  Github
+  Github,
+  Sparkles,
+  Target,
+  TrendingUp
 } from 'lucide-react';
 
 const InteractiveHero: React.FC = () => {
@@ -38,44 +42,47 @@ const InteractiveHero: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [splineLoaded, setSplineLoaded] = useState(false);
+
+  const stats = [
+    { number: '50K+', label: 'Active Students', icon: Users },
+    { number: '500+', label: 'Expert Courses', icon: BookOpen },
+    { number: '95%', label: 'Success Rate', icon: Target },
+    { number: '4.9★', label: 'Student Rating', icon: Star }
+  ];
 
   const techCategories = [
-    { name: 'Programming', icon: Code, color: 'bg-blue-500' },
-    { name: 'AI & ML', icon: Cpu, color: 'bg-purple-500' },
-    { name: 'Data Science', icon: Database, color: 'bg-green-500' },
-    { name: 'Cybersecurity', icon: Shield, color: 'bg-red-500' },
-    { name: 'Cloud Computing', icon: Cloud, color: 'bg-indigo-500' },
-    { name: 'Web Development', icon: Globe, color: 'bg-orange-500' },
-    { name: 'Mobile Dev', icon: Smartphone, color: 'bg-pink-500' },
-    { name: 'Game Dev', icon: Gamepad2, color: 'bg-yellow-500' },
-    { name: 'Blockchain', icon: Bitcoin, color: 'bg-teal-500' },
+    { name: 'Programming', icon: Code, color: 'from-blue-500 to-blue-600' },
+    { name: 'AI & ML', icon: Cpu, color: 'from-purple-500 to-purple-600' },
+    { name: 'Data Science', icon: Database, color: 'from-green-500 to-green-600' },
+    { name: 'Cybersecurity', icon: Shield, color: 'from-red-500 to-red-600' },
+    { name: 'Cloud Computing', icon: Cloud, color: 'from-indigo-500 to-indigo-600' },
+    { name: 'Web Development', icon: Globe, color: 'from-orange-500 to-orange-600' },
+    { name: 'Mobile Dev', icon: Smartphone, color: 'from-pink-500 to-pink-600' },
+    { name: 'Game Dev', icon: Gamepad2, color: 'from-yellow-500 to-yellow-600' },
+    { name: 'Blockchain', icon: Bitcoin, color: 'from-teal-500 to-teal-600' },
   ];
 
   const features = [
     {
       icon: BookOpen,
-      title: 'Interactive Courses',
-      description: 'Hands-on learning with real projects, quizzes, and coding labs'
-    },
-    {
-      icon: Globe,
-      title: 'External Resources',
-      description: 'YouTube playlists, Google search, and AI-curated research materials'
-    },
-    {
-      icon: Users,
-      title: 'Live Events',
-      description: 'Workshops, webinars, and community challenges with experts'
+      title: 'Interactive Learning',
+      description: 'Hands-on projects and real-world applications'
     },
     {
       icon: Trophy,
-      title: 'Global Hackathons',
-      description: 'Participate in hackathons from around the world powered by Devpost'
+      title: 'Industry Recognition',
+      description: 'Certificates valued by top tech companies'
     },
     {
-      icon: Award,
-      title: 'Achievements',
-      description: 'Badges, certificates, and leaderboards to track your progress'
+      icon: Users,
+      title: 'Expert Mentorship',
+      description: '1-on-1 guidance from industry professionals'
+    },
+    {
+      icon: Zap,
+      title: 'Fast-Track Learning',
+      description: 'Accelerated paths to master new skills'
     }
   ];
 
@@ -135,25 +142,28 @@ const InteractiveHero: React.FC = () => {
   // If user is authenticated, show dashboard link
   if (isAuthenticated) {
     return (
-      <section className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center px-4">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center px-4 relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        
+        <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="mb-8">
-            <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-4 rounded-2xl inline-block mb-6">
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 rounded-2xl inline-block mb-6 shadow-2xl">
               <BookOpen className="h-12 w-12 text-white" />
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Welcome to <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">SkillSync Academy</span>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              Welcome back to <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">SkillSync Academy</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              You're all set! Continue your learning journey with personalized courses and expert guidance.
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              Continue your learning journey with personalized courses and expert guidance.
             </p>
           </div>
           
           <Link
             to="/dashboard"
-            className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-primary-700 hover:to-secondary-700 transition-all duration-300 text-lg inline-flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 text-lg inline-flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >
-            <span>Go to Dashboard</span>
+            <span>Continue Learning</span>
             <ArrowRight className="h-5 w-5" />
           </Link>
         </div>
@@ -162,45 +172,71 @@ const InteractiveHero: React.FC = () => {
   }
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <section className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center min-h-screen">
+          
           {/* Left Column - Hero Content */}
-          <div className="space-y-8">
+          <div className="space-y-8 text-white">
             {/* Logo and Brand */}
             <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-3 rounded-xl">
+              <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-xl shadow-lg">
                 <BookOpen className="h-8 w-8 text-white" />
               </div>
-              <span className="text-2xl font-bold text-gray-900">SkillSync Academy</span>
+              <span className="text-2xl font-bold">SkillSync Academy</span>
             </div>
 
             {/* Main Headline */}
             <div>
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
+              <div className="flex items-center space-x-2 mb-4">
+                <Sparkles className="h-6 w-6 text-yellow-400" />
+                <span className="text-yellow-400 font-semibold text-sm uppercase tracking-wide">
+                  Transform Your Future
+                </span>
+              </div>
+              <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
                 Master Every
-                <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent block">
+                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent block">
                   Technology
                 </span>
-                Domain
+                <span className="text-white">Domain</span>
               </h1>
-              <p className="text-xl text-gray-600 mb-8 max-w-lg">
-                From programming fundamentals to cutting-edge AI, accelerate your tech career with comprehensive courses and hands-on projects.
+              <p className="text-xl text-gray-300 mb-8 max-w-lg leading-relaxed">
+                From programming fundamentals to cutting-edge AI, accelerate your tech career with 
+                <span className="text-blue-400 font-semibold"> comprehensive courses</span> and 
+                <span className="text-purple-400 font-semibold"> hands-on projects</span>.
               </p>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {stats.map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={stat.label} className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                    <Icon className="h-6 w-6 text-blue-400 mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-white">{stat.number}</div>
+                    <div className="text-sm text-gray-300">{stat.label}</div>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Key Features */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {features.slice(0, 4).map((feature, index) => {
+              {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
-                  <div key={feature.title} className="flex items-start space-x-3 p-4 bg-white/60 rounded-lg backdrop-blur-sm">
-                    <div className="bg-primary-100 p-2 rounded-lg flex-shrink-0">
-                      <Icon className="h-5 w-5 text-primary-600" />
+                  <div key={feature.title} className="flex items-start space-x-3 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-lg flex-shrink-0">
+                      <Icon className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 text-sm">{feature.title}</h3>
-                      <p className="text-gray-600 text-xs">{feature.description}</p>
+                      <h3 className="font-semibold text-white text-sm">{feature.title}</h3>
+                      <p className="text-gray-300 text-xs">{feature.description}</p>
                     </div>
                   </div>
                 );
@@ -209,19 +245,22 @@ const InteractiveHero: React.FC = () => {
 
             {/* Tech Categories Preview */}
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-3">Popular Learning Paths:</p>
+              <p className="text-sm font-medium text-gray-300 mb-3 flex items-center space-x-2">
+                <TrendingUp className="h-4 w-4" />
+                <span>Popular Learning Paths:</span>
+              </p>
               <div className="flex flex-wrap gap-2">
                 {techCategories.slice(0, 6).map((category, index) => {
                   const Icon = category.icon;
                   return (
                     <div
                       key={category.name}
-                      className="flex items-center space-x-2 bg-white px-3 py-2 rounded-full shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+                      className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 cursor-pointer"
                     >
-                      <div className={`${category.color} w-4 h-4 rounded-full flex items-center justify-center`}>
+                      <div className={`bg-gradient-to-r ${category.color} w-4 h-4 rounded-full flex items-center justify-center`}>
                         <Icon className="h-2.5 w-2.5 text-white" />
                       </div>
-                      <span className="text-sm font-medium text-gray-700">{category.name}</span>
+                      <span className="text-sm font-medium text-white">{category.name}</span>
                     </div>
                   );
                 })}
@@ -229,15 +268,52 @@ const InteractiveHero: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column - Authentication Form */}
-          <div className="lg:pl-8">
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 max-w-md mx-auto">
+          {/* Right Column - 3D Scene and Auth Form */}
+          <div className="lg:pl-8 space-y-8">
+            {/* 3D Spline Scene */}
+            <div className="relative h-96 w-full rounded-2xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-purple-900/20 backdrop-blur-sm border border-white/10">
+              <Suspense fallback={
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+                    <p className="text-sm">Loading 3D Experience...</p>
+                  </div>
+                </div>
+              }>
+                <Spline 
+                  scene="https://prod.spline.design/aXNv3GGDJB6QILuV/scene.splinecode"
+                  onLoad={() => setSplineLoaded(true)}
+                  style={{ width: '100%', height: '100%' }}
+                />
+              </Suspense>
+              
+              {/* Overlay for better text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
+              
+              {/* Floating elements */}
+              <div className="absolute top-4 left-4 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
+                <div className="flex items-center space-x-2 text-white">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium">Interactive Learning</span>
+                </div>
+              </div>
+              
+              <div className="absolute bottom-4 right-4 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
+                <div className="flex items-center space-x-2 text-white">
+                  <Zap className="h-3 w-3 text-yellow-400" />
+                  <span className="text-xs font-medium">AI-Powered</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Authentication Form */}
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 shadow-2xl">
               {/* Form Header */}
               <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  {isSignUp ? 'Create Account' : 'Welcome Back'}
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  {isSignUp ? 'Join SkillSync Academy' : 'Welcome Back'}
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-gray-300">
                   {isSignUp 
                     ? 'Start your learning journey today' 
                     : 'Continue your tech learning journey'
@@ -247,16 +323,16 @@ const InteractiveHero: React.FC = () => {
 
               {/* Error Message */}
               {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
-                  <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-                  <p className="text-red-700 text-sm">{error}</p>
+                <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg flex items-start space-x-2">
+                  <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-300 text-sm">{error}</p>
                 </div>
               )}
 
               {/* Firebase Status Warning */}
               {!isFirebaseReady && (
-                <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <p className="text-yellow-800 text-sm">
+                <div className="mb-6 p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-lg">
+                  <p className="text-yellow-300 text-sm">
                     ⚠️ Authentication service is initializing. Please wait a moment before signing in.
                   </p>
                 </div>
@@ -266,7 +342,7 @@ const InteractiveHero: React.FC = () => {
               <button
                 onClick={handleGoogleSignIn}
                 disabled={loading || !isFirebaseReady}
-                className="w-full flex items-center justify-center space-x-3 bg-white border-2 border-gray-300 rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-6"
+                className="w-full flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3 font-medium text-white hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-6"
               >
                 {loading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -286,10 +362,10 @@ const InteractiveHero: React.FC = () => {
               {/* Divider */}
               <div className="relative mb-6">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
+                  <div className="w-full border-t border-white/20" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">or</span>
+                  <span className="px-2 bg-transparent text-gray-300">or</span>
                 </div>
               </div>
 
@@ -297,7 +373,7 @@ const InteractiveHero: React.FC = () => {
               <form onSubmit={handleEmailAuth} className="space-y-4">
                 {isSignUp && (
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
                       Full Name
                     </label>
                     <input
@@ -305,7 +381,7 @@ const InteractiveHero: React.FC = () => {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
                       placeholder="Enter your full name"
                       disabled={loading}
                     />
@@ -313,7 +389,7 @@ const InteractiveHero: React.FC = () => {
                 )}
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
                     Email Address
                   </label>
                   <div className="relative">
@@ -323,7 +399,7 @@ const InteractiveHero: React.FC = () => {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full pl-10 pr-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
                       placeholder="Enter your email"
                       disabled={loading}
                     />
@@ -331,7 +407,7 @@ const InteractiveHero: React.FC = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
                     Password
                   </label>
                   <div className="relative">
@@ -341,14 +417,14 @@ const InteractiveHero: React.FC = () => {
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full pl-10 pr-10 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
                       placeholder="Enter your password"
                       disabled={loading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
                       disabled={loading}
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -359,7 +435,7 @@ const InteractiveHero: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading || !isFirebaseReady}
-                  className="w-full bg-gradient-to-r from-primary-600 to-secondary-600 text-white py-3 rounded-lg font-semibold hover:from-primary-700 hover:to-secondary-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg"
                 >
                   {loading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -374,7 +450,7 @@ const InteractiveHero: React.FC = () => {
 
               {/* Toggle Sign Up/Sign In */}
               <div className="mt-6 text-center">
-                <p className="text-gray-600">
+                <p className="text-gray-300">
                   {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
                   <button
                     onClick={() => {
@@ -384,7 +460,7 @@ const InteractiveHero: React.FC = () => {
                       setPassword('');
                       setName('');
                     }}
-                    className="text-primary-600 hover:text-primary-700 font-medium"
+                    className="text-blue-400 hover:text-blue-300 font-medium"
                     disabled={loading}
                   >
                     {isSignUp ? 'Sign In' : 'Sign Up'}
@@ -393,8 +469,8 @@ const InteractiveHero: React.FC = () => {
               </div>
 
               {/* Trust Indicators */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="flex items-center justify-center space-x-4 text-sm text-gray-500">
+              <div className="mt-6 pt-6 border-t border-white/20">
+                <div className="flex items-center justify-center space-x-4 text-sm text-gray-300">
                   <div className="flex items-center space-x-1">
                     <Shield className="h-4 w-4" />
                     <span>Secure</span>
