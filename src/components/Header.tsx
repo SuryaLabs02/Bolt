@@ -10,7 +10,7 @@ import {
   Home,
   GraduationCap,
   ExternalLink,
-  Trophy,
+  Calendar,
   Newspaper
 } from 'lucide-react';
 
@@ -24,7 +24,7 @@ const Header: React.FC = () => {
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Courses', href: '/courses', icon: GraduationCap },
     { name: 'Resources', href: '/resources', icon: ExternalLink },
-    { name: 'Hackathons', href: '/events', icon: Trophy },
+    { name: 'Events', href: '/events', icon: Calendar },
     { name: 'News', href: '/news', icon: Newspaper },
   ];
 
