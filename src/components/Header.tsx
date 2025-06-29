@@ -25,8 +25,8 @@ const Header: React.FC = () => {
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Courses', href: '/courses', icon: GraduationCap },
     { name: 'Resources', href: '/resources', icon: ExternalLink },
-    { name: 'Before Hackathon', href: '/before-hackathon', icon: Calendar, highlight: true },
-    { name: 'Hackathons', href: '/events', icon: Trophy },
+    { name: 'Events', href: '/events', icon: Calendar, highlight: true },
+    { name: 'Hackathons', href: '/hackathons', icon: Trophy },
     { name: 'News', href: '/news', icon: Newspaper },
   ];
 

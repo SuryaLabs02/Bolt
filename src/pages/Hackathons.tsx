@@ -20,7 +20,7 @@ import {
   Rocket
 } from 'lucide-react';
 
-const BeforeHackathon: React.FC = () => {
+const Hackathons: React.FC = () => {
   const [checkedItems, setCheckedItems] = useState<number[]>([]);
 
   const upcomingHackathons = [
@@ -191,7 +191,7 @@ const BeforeHackathon: React.FC = () => {
             <Rocket className="h-8 w-8 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Before Hackathon</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Hackathon Preparation</h1>
             <p className="text-gray-600">Get ready to dominate your next hackathon with proper preparation</p>
           </div>
         </div>
@@ -430,4 +430,4 @@ const BeforeHackathon: React.FC = () => {
   );
 };
 
-export default BeforeHackathon;
+export default Hackathons;
