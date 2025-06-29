@@ -17,43 +17,49 @@ import Profile from './pages/Profile';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [showMainApp, setShowMainApp] = useState(false);
 
-  useEffect(() => {
-    // Show loading screen for 5 seconds
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+    // Small delay to ensure smooth transition
+    setTimeout(() => {
+      setShowMainApp(true);
+    }, 100);
+  };
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingScreen onLoadingComplete={handleLoadingComplete} />;
   }
 
   return (
-    <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-          <Header />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/courses" element={<Courses />} />
-              <Route path="/youtube-courses" element={<YouTubeCourses />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/hackathons" element={<Hackathons />} />
-              <Route path="/news" element={<News />} />
-              <Route path="/profile" element={<Profile />} />
-            </Routes>
-          </main>
-          <Footer />
-          <StudyAssistantChatbot />
-          <OnboardingChatbot />
-        </div>
-      </Router>
-    </AuthProvider>
+    <div 
+      className={`transition-all duration-700 ease-out ${
+        showMainApp ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+      }`}
+    >
+      <AuthProvider>
+        <Router>
+          <div className="min-h-screen bg-gray-50 flex flex-col">
+            <Header />
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/courses" element={<Courses />} />
+                <Route path="/youtube-courses" element={<YouTubeCourses />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/hackathons" element={<Hackathons />} />
+                <Route path="/news" element={<News />} />
+                <Route path="/profile" element={<Profile />} />
+              </Routes>
+            </main>
+            <Footer />
+            <StudyAssistantChatbot />
+            <OnboardingChatbot />
+          </div>
+        </Router>
+      </AuthProvider>
+    </div>
   );
 }
 

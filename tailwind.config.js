@@ -50,6 +50,8 @@ export default {
         'bounce-soft': 'bounce 1s infinite',
         'shapeWave': 'shapeWave 2.4s ease infinite',
         'triangleWave': 'triangleWave 2.4s ease infinite',
+        'zoom-in': 'zoomIn 0.5s ease-out',
+        'zoom-out': 'zoomOut 0.5s ease-in',
       },
       keyframes: {
         fadeIn: {
@@ -59,6 +61,14 @@ export default {
         slideUp: {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        zoomIn: {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        zoomOut: {
+          '0%': { transform: 'scale(1)', opacity: '1' },
+          '100%': { transform: 'scale(1.1)', opacity: '0' },
         },
         shapeWave: {
           '0%': {
@@ -155,6 +165,11 @@ export default {
       },
       borderWidth: {
         '7': '7px',
+      },
+      scale: {
+        '95': '0.95',
+        '110': '1.1',
+        '150': '1.5',
       },
     },
   },
