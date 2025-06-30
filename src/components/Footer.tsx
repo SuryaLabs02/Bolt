@@ -160,14 +160,28 @@ const Footer: React.FC = () => {
             <div className="flex items-center space-x-6 mb-4 md:mb-0">
               {/* Bolt Hackathon Badge */}
               <div className="flex items-center space-x-3">
-                <img 
-                  src="/black_circle_360x360.png" 
-                  alt="Powered by Bolt" 
-                  className="w-12 h-12 hover:scale-110 transition-transform duration-300"
-                />
+                <a 
+                  href="https://bolt.new/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:scale-110 transition-transform duration-300"
+                >
+                  <img 
+                    src="/black_circle_360x360.png" 
+                    alt="Powered by Bolt" 
+                    className="w-12 h-12"
+                  />
+                </a>
                 <div>
                   <p className="text-sm font-medium text-gray-300">Built with</p>
-                  <p className="text-xs text-gray-500">Bolt.new - Made in Bolt</p>
+                  <a 
+                    href="https://bolt.new/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                  >
+                    Bolt.new - Made in Bolt
+                  </a>
                 </div>
               </div>
               

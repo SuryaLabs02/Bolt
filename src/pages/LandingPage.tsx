@@ -153,10 +153,10 @@ const LandingPage: React.FC = () => {
               Join thousands of students already learning and building their tech careers
             </p>
             <Link
-              to="/dashboard"
+              to="/hackathons"
               className="bg-accent-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-accent-600 transition-colors text-lg inline-flex items-center space-x-2"
             >
-              <span>Go to Dashboard</span>
+              <span>Explore Hackathons</span>
               <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
